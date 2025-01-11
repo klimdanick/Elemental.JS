@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <script src="/Elemental.js"></script>
+    </head>
+    <body></body>
+</html>
+<script>
+    const buttonClick = (image) => {
+        window.open(image, '_blank').focus();
+    }
+
+    OnElementalLoad = () => {
+        let layout = simpleLayout();
+        layout.classList.add("fill");
+        document.getElementsByTagName("body")[0].appendChild(layout);
+
+        let title = titleElement("Card example!");
+        layout.appendChild(title);
+        let cards = simpleLayout(direction = "row");
+        cards.classList.add("cards");
+        layout.appendChild(cards);
+
+        let card = simpleCard([imageElement("bern.jpg", {full: true}), titleElement("Bern"), textElement("Capital of switzerland"), buttonElement("Click Me!", () => {buttonClick("bern.jpg")})], 300);
+        card.el.style.backgroundColor = "var(--level0)";
+        cards.appendChild(card.el);
+
+        let card2 = simpleCard([imageElement("verona.jpg", {full: false, height: "350px"}), titleElement("Verona!"), textElement("City in Italy!"), buttonElement("Click Me!", () => {buttonClick("verona.jpg")})], 300);
+        card2.el.style.backgroundColor = "var(--primary)";
+        card2.content[3].style.backgroundColor = "var(--level0)";
+        cards.appendChild(card2.el);
+
+        let card3 = simpleCard([imageElement("Soca.jpg", {full: false, height: 300}), titleElement("Soča"), textElement("River in slovenia!"),  buttonElement("Click Me!", () => {buttonClick("soca.jpg")})], 300);
+        card3.el.style.backgroundColor = "var(--secondary)";
+        card3.content[3].style.backgroundColor = "var(--level0)";
+        cards.appendChild(card3.el);
+    }
+</script>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .cards {
+        border-radius: 10px;
+        background-color: var(--level1);
+        overflow: auto !important;
+        justify-content: flex-start;
+        margin-bottom: 2%;
+    }
+</style>

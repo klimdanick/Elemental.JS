@@ -1,0 +1,122 @@
+:root {
+    --level0: #1d1d1d;
+    --level1: #2c2c2c;
+    --primary: #b81e44;
+    --secondary: #5DB7DE;
+    --text: #fff;
+    --trasition1: 60ms;
+}
+
+.elemental {
+    font-family: 'D-DIN-Bold', Arial, Verdana, sans-serif;
+    color: var(--text);
+    margin: 20px;
+}
+
+.layout {
+    background: var(--level0);
+    padding: 10px;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fill {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    overflow: auto !important;
+}
+
+.topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 60px;
+    padding: 0;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 100vh;
+    padding: 0;
+}
+
+.sideAndTopBarLayoutMain {
+    position: absolute;
+    background-color: var(--level1);
+    border-radius: 10px 0px 0px 0px;
+    width: calc(100% - 60px);
+    height: calc(100% - 60px);
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    z-index: 0;
+    padding: 0;
+}
+
+.card {
+    background: var(--level1);
+    color: var(--text);
+    width: max-content;
+    height: max-content;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+
+}
+
+.card * {
+    margin: 8px;
+}
+
+.card .image {
+    margin: 10px;
+    margin-left: 0px !important;
+}
+
+.button {
+    background-color: var(--primary);
+    border-radius: 3em;
+    padding: 1em;
+    width: max-content;
+    height: max-content;
+    transition: all;
+    transition-duration: 200ms;
+}
+
+.button:hover {
+    filter: brightness(70%);
+}
+
+.image {
+    background-color: var(--level1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.image img {
+    /* position: absolute; */
+    left: 0;
+    top: 0;
+    z-index: 1;
+    margin: 0px !important;
+    object-fit: cover;
+}
+
+.image .alt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
