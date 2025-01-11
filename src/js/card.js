@@ -47,8 +47,7 @@ const imageElement = (src = "", {alt, width, height, full = true}) => {
     el.appendChild(image);
     let preload = new Image;
     preload.onload = function() {
-        console.table({width, height, elWidth: el.offsetWidth, elHeight: el.offsetHeight});
-
+        alt.style.display = "none";
         image.src = this.src;
 
         if (full) {
@@ -92,7 +91,8 @@ const imageElement = (src = "", {alt, width, height, full = true}) => {
         console.table({elWidth: el.offsetWidth, elHeight: el.offsetHeight});
     }}, 4);
     setTimeout(()=> {
-    console.log(src);
+        alt.style.width = el.offsetWidth;
+        alt.style.height = el.offsetHeight;
     }, 5);
     setTimeout(()=> {
         preload.src = src;

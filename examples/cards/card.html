@@ -9,6 +9,14 @@
         window.open(image, '_blank').focus();
     }
 
+    const loadingDiv = () => {
+        let el = simpleCard([titleElement("LOADING")]).el;
+        el.style.backgroundColor = "var(--level1)";
+        el.style.justifyContent = "center";
+        el.style.alignItems = "center";
+        return el;
+    }
+
     OnElementalLoad = () => {
         let layout = simpleLayout();
         layout.classList.add("fill");
@@ -20,16 +28,16 @@
         cards.classList.add("cards");
         layout.appendChild(cards);
 
-        let card = simpleCard([imageElement("bern.jpg", {full: true}), titleElement("Bern"), textElement("Capital of switzerland"), buttonElement("Click Me!", () => {buttonClick("bern.jpg")})], 300);
+        let card = simpleCard([imageElement("bern.jpg", {alt: loadingDiv(), full: true}), titleElement("Bern"), textElement("Capital of switzerland"), buttonElement("Click Me!", () => {buttonClick("bern.jpg")})], 300);
         card.el.style.backgroundColor = "var(--level0)";
         cards.appendChild(card.el);
 
-        let card2 = simpleCard([imageElement("verona.jpg", {full: false, height: "350px"}), titleElement("Verona!"), textElement("City in Italy!"), buttonElement("Click Me!", () => {buttonClick("verona.jpg")})], 300);
+        let card2 = simpleCard([imageElement("verona.jpg", {alt: loadingDiv(), full: false, height: "350px"}), titleElement("Verona!"), textElement("City in Italy!"), buttonElement("Click Me!", () => {buttonClick("verona.jpg")})], 300);
         card2.el.style.backgroundColor = "var(--primary)";
         card2.content[3].style.backgroundColor = "var(--level0)";
         cards.appendChild(card2.el);
 
-        let card3 = simpleCard([imageElement("Soca.jpg", {full: false, height: 300}), titleElement("Soča"), textElement("River in slovenia!"),  buttonElement("Click Me!", () => {buttonClick("soca.jpg")})], 300);
+        let card3 = simpleCard([imageElement("Soca.jpg", {alt: loadingDiv(), full: false, height: 300}), titleElement("Soča"), textElement("River in slovenia!"),  buttonElement("Click Me!", () => {buttonClick("soca.jpg")})], 300);
         card3.el.style.backgroundColor = "var(--secondary)";
         card3.content[3].style.backgroundColor = "var(--level0)";
         cards.appendChild(card3.el);
