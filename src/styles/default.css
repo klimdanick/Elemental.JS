@@ -90,7 +90,7 @@
     width: max-content;
     height: max-content;
     transition: all;
-    transition-duration: 200ms;
+    transition-duration: var(--trasition1);
 }
 
 .button:hover {

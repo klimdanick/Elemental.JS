@@ -28,19 +28,33 @@
         cards.classList.add("cards");
         layout.appendChild(cards);
 
-        let card = simpleCard([imageElement("bern.jpg", {alt: loadingDiv(), full: true}), titleElement("Bern"), textElement("Capital of switzerland"), buttonElement("Click Me!", () => {buttonClick("bern.jpg")})], 300);
-        card.el.style.backgroundColor = "var(--level0)";
-        cards.appendChild(card.el);
+        let images = ["bern.jpg", "verona.jpg", "Soca.jpg"];
 
-        let card2 = simpleCard([imageElement("verona.jpg", {alt: loadingDiv(), full: false, height: "350px"}), titleElement("Verona!"), textElement("City in Italy!"), buttonElement("Click Me!", () => {buttonClick("verona.jpg")})], 300);
-        card2.el.style.backgroundColor = "var(--primary)";
-        card2.content[3].style.backgroundColor = "var(--level0)";
-        cards.appendChild(card2.el);
+        let imageSettings = [
+            {alt: loadingDiv(), full: true},
+            {alt: loadingDiv(), full: false, height: 350},
+            {alt: loadingDiv(), full: false, height: 300}    
+        ];
 
-        let card3 = simpleCard([imageElement("Soca.jpg", {alt: loadingDiv(), full: false, height: 300}), titleElement("Soča"), textElement("River in slovenia!"),  buttonElement("Click Me!", () => {buttonClick("soca.jpg")})], 300);
-        card3.el.style.backgroundColor = "var(--secondary)";
-        card3.content[3].style.backgroundColor = "var(--level0)";
-        cards.appendChild(card3.el);
+        let Titles = ["Bern", "Verona", "Soča"];
+        let Text = ["Capital of switzerland", "City in Italy!", "River in slovenia!"];
+        let colors = ["var(--level0)", "var(--primary)", "var(--secondary)"]
+        let buttonColors = ["var(--primary)", "var(--level0)", "var(--level0)"]
+
+        for (let a = 0; a < 3; a++) {
+            let i = a % 3
+            
+            let card = simpleCard([
+                imageElement(images[i], imageSettings[i]),
+                titleElement(Titles[i]),
+                textElement(Text[i]),
+                buttonElement("Click Me!", () => {buttonClick(images[i])})
+            ], 300);
+
+            card.el.style.backgroundColor = colors[i];
+            card.content[3].style.backgroundColor = buttonColors[i];
+            cards.appendChild(card.el);
+        }
     }
 </script>
 <style>
