@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <script src="/Elemental.js"></script>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+        <script>
+
+            let layout;
+
+            OnElementalLoad = () => {
+                new Layout("column").setAsMain().appendChild(layout = new Layout());
+                layout.style.width = "100%";
+                let menu1 = new SimpleMenu("left");
+                layout.appendChild(menu1);
+
+                let menuItems = [
+                    new SimpleMenuItem("menu.png", "Home", () => {console.log("click")}),
+                    new SimpleMenuItem("menu.png", "About", () => {console.log("click")})
+                ]
+
+                menu1.appendChildren(menuItems);
+            }
+        </script>
+    </head>
+
+    <body>
+        <h1>Menu example!</h1>
+    </body>
+</html>
