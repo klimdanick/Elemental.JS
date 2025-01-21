@@ -7,13 +7,13 @@
     --trasition1: 60ms;
 }
 
-.elemental {
+.elemental, Layout, Element {
     font-family: 'D-DIN-Bold', Arial, Verdana, sans-serif;
     color: var(--text);
     margin: 20px;
 }
 
-.layout {
+.layout, Layout {
     background: var(--level0);
     padding: 10px;
     margin: 0;

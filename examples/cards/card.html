@@ -1,73 +1,43 @@
 <html>
     <head>
         <script src="/Elemental.js"></script>
-    </head>
-    <body></body>
-</html>
-<script>
-    const buttonClick = (image) => {
-        window.open(image, '_blank').focus();
-    }
-
-    const loadingDiv = () => {
-        let el = simpleCard([titleElement("LOADING")]).el;
-        el.style.backgroundColor = "var(--level1)";
-        el.style.justifyContent = "center";
-        el.style.alignItems = "center";
-        return el;
-    }
-
-    OnElementalLoad = () => {
-        let layout = simpleLayout();
-        layout.classList.add("fill");
-        document.getElementsByTagName("body")[0].appendChild(layout);
-
-        let title = titleElement("Card example!");
-        layout.appendChild(title);
-        let cards = simpleLayout(direction = "row");
-        cards.classList.add("cards");
-        layout.appendChild(cards);
-
-        let images = ["bern.jpg", "verona.jpg", "soca.jpg"];
-
-        let imageSettings = [
-            {alt: loadingDiv(), full: true},
-            {alt: loadingDiv(), full: false, height: 350},
-            {alt: loadingDiv(), full: false, height: 350}    
-        ];
-
-        let Titles = ["Bern", "Verona", "Soča"];
-        let Text = ["Capital of switzerland", "City in Italy!", "River in slovenia!"];
-        let colors = ["var(--level0)", "var(--primary)", "var(--secondary)"]
-        let buttonColors = ["var(--primary)", "var(--level0)", "var(--level0)"]
-
-        for (let a = 0; a < 3; a++) {
-            let i = a % 3
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+        <script>
+            let layout;
             
-            let card = simpleCard([
-                imageElement(images[i], imageSettings[i]),
-                titleElement(Titles[i]),
-                textElement(Text[i]),
-                buttonElement("Click Me!", () => {buttonClick(images[i])})
-            ], 300);
+            OnElementalLoad = () => {
+                layout = new Layout("row");
+                new Layout("column").setAsMain().appendChild(layout);
+                layout.appendChild(buildCard("bern.jpg", "Bern", "capital of Switzerland", "var(--level1)", "var(--primary)"));
+                layout.appendChild(buildCard("verona.jpg", "Verona", "city in Italy", "var(--primary)"));
+                layout.appendChild(buildCard("soca.jpg", "Soča", "river in Slovenia", "var(--secondary)"));
+                // layout.style.backgroundColor = "var(--level1)";
+            }
+    
+            const buttonClick = (image) => {
+                window.open(image, '_blank').focus();
+            }
+        
+            const buildCard = (img, title, text, color, buttonColor = "var(--level0)") => {
+                let button;
+                let card = new Card(300)
+                .appendChild(new ImageEl().size({full: false, height: 350}).load(img))
+                .appendChild(new Title(title))
+                .appendChild(new Text(text))
+                .appendChild(button = new Button("Click me!", () => {buttonClick(img)}));
+                card.style.backgroundColor = color;
+                button.style.backgroundColor = buttonColor;
+                return card;
+            }
+        </script>
+    </head>
 
-            card.el.style.backgroundColor = colors[i];
-            card.content[3].style.backgroundColor = buttonColors[i];
-            cards.appendChild(card.el);
-        }
-    }
-</script>
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    .cards {
-        border-radius: 10px;
-        background-color: var(--level1);
-        overflow: auto !important;
-        justify-content: flex-start;
-        margin-bottom: 2%;
-    }
-</style>
+    <body>
+        <h1>Card example!</h1>
+    </body>
+</html>
