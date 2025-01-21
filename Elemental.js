@@ -7,6 +7,8 @@ function isDOM(Obj) {
     return Obj instanceof Element;
 }
 
+const stringToHTML =  string=> new DOMParser().parseFromString(string, 'text/html').body.firstChild
+
 function AttachScript(src) {
     if (loadedScripts.includes(src)) return;
     var script = document.createElement("script");

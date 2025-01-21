@@ -4,18 +4,19 @@
     --primary: #b81e44;
     --secondary: #5DB7DE;
     --text: #fff;
-    --trasition1: 60ms;
+    --trasition1: 200ms;
 }
 
-.elemental, Layout, Element {
+Layout, Element {
     font-family: 'D-DIN-Bold', Arial, Verdana, sans-serif;
     color: var(--text);
     margin: 20px;
 }
 
-.layout, Layout {
+
+Layout {
     background: var(--level0);
-    padding: 10px;
+    padding: 0px;
     margin: 0;
     overflow: hidden;
     display: flex;
@@ -122,5 +123,29 @@
 }
 
 .menu {
-    background-color: var(--level1);
+    background-color: var(--primary);
+    width: max-content;
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.menu * {
+    width: 100%;
+    margin: 0px;
+    background-color: inherit;
+    border-radius: 0;
+}
+
+.menuItem {
+    height: 1em;
+    padding: 0.8em;
+}
+
+.menuItem img {
+    height: 100%;
+    width: auto;
+    margin-right: 0.1em;
 }

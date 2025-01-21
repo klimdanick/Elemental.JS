@@ -23,7 +23,7 @@ class Text extends Element {
 }
 class Button extends Element {
     constructor(label, callback) {
-        super("span");
+        super("div");
         if (typeof(label) == "string") this.htmlEl.innerText = label;
         else if (isDOM(label)) this.htmlEl.appendChild(label);
         this.htmlEl.classList.add("elemental");
