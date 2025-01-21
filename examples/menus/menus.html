@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <script src="/Elemental.js"></script>
+    </head>
+    <body></body>
+</html>
+<script>
+    OnElementalLoad = () => {
+        let layout = simpleLayout(direction = "row");
+        layout.classList.add("fill");
+        document.getElementsByTagName("body")[0].appendChild(layout);
+
+        let menuContent = [
+            buttonElement("&#9776;", () => {alert("click")}),
+            "Text",
+            buttonElement(imageElement("menu.png", {full: false, width: 64, height: 64}), () => {})
+        ]
+
+        let menu = simpleMenu(menuContent);
+        layout.appendChild(menu.el);
+    }
+</script>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+</style>

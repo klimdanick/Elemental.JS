@@ -84,6 +84,7 @@
 }
 
 .button {
+    display: block;
     background-color: var(--primary);
     border-radius: 3em;
     padding: 1em;
@@ -98,9 +99,10 @@
 }
 
 .image {
-    background-color: var(--level1);
+    /* background-color: var(--level1); */
     border-radius: 10px;
     overflow: hidden;
+    margin: 0;
 }
 
 .image img {
@@ -117,4 +119,8 @@
     z-index: 0;
     margin: 0px !important;
     padding: 0%;
+}
+
+.menu {
+    background-color: var(--level1);
 }

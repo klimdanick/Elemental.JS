@@ -28,7 +28,8 @@ const textElement = (text) => {
 
 const buttonElement = (label, callback) => {
     let el = document.createElement("span");
-    el.innerText = label;
+    if (typeof(label) == "string") el.innerText = label;
+    else if (isDOM(label)) el.appendChild(label);
     el.classList.add("elemental");
     el.classList.add("button");
     el.onclick = callback;
@@ -47,7 +48,7 @@ const imageElement = (src = "", {alt, width, height, full = true}) => {
     el.appendChild(image);
     let preload = new Image;
     preload.onload = function() {
-        alt.style.display = "none";
+        if (alt) alt.style.display = "none";
         image.src = this.src;
 
         if (full) {
@@ -91,8 +92,10 @@ const imageElement = (src = "", {alt, width, height, full = true}) => {
         console.table({elWidth: el.offsetWidth, elHeight: el.offsetHeight});
     }}, 4);
     setTimeout(()=> {
-        alt.style.width = el.offsetWidth;
-        alt.style.height = el.offsetHeight;
+        if (alt) {
+            alt.style.width = el.offsetWidth;
+            alt.style.height = el.offsetHeight;
+        }
     }, 5);
     setTimeout(()=> {
         preload.src = src;
@@ -101,36 +104,4 @@ const imageElement = (src = "", {alt, width, height, full = true}) => {
     return el;
 }
 
-// const imageElement = (src = "", {alt, width = "100%", height, full = true}) => {
-//     let el = document.createElement("div");
-//     el.style.width = width;
-//     if (!height && !full) {
-//         setTimeout(() => {
-//             el.style.height = Math.floor(el.offsetWidth * (3/4)) + "px";
-//         }, 10);
-//     }
-//     else el.style.height = height;
-//     el.classList.add("elemental");
-//     el.classList.add("image");
-//     if (alt) {
-//         alt.classList.add("alt");
-//         el.appendChild(alt);
-//     }
-//     let image = document.createElement("img");
-//     el.appendChild(image);
-//     let preload = new Image;
-//     preload.onload = function() {
-//         image.src = this.src;
-//         image.width = el.offsetWidth;
-//         if (full) {
-//             let aspRatio = preload.height / preload.width;
-//             el.style.height = Math.floor(el.offsetWidth * aspRatio) + "px";
-//             console.table({aspRatio, width: el.offsetWidth, height: el.style.height});
-//         }
-//         //image.height = el.offsetHeight;
-//     }
-//     preload.src = src;
-//     return el;
-// }
-
-loadedScripts.push("/src/styles/card.js");
+loadedScripts.push("/src/js/card.js");

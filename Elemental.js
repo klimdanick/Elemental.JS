@@ -3,6 +3,10 @@ let loadedStyles = [];
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+function isDOM(Obj) {
+    return Obj instanceof Element;
+}
+
 function AttachScript(src) {
     if (loadedScripts.includes(src)) return;
     var script = document.createElement("script");
@@ -26,7 +30,8 @@ let Interval;
 window.onload = () => {
     AttachScript("/src/js/layout.js");
     AttachScript("/src/js/card.js");
+    AttachScript("/src/js/menu.js");
     AttachStyle("/src/styles/default.css");
-    Interval = setInterval(() => {console.log(1); if (loadedScripts.length >= 2) OnElementalLoad(); clearInterval(Interval);}, 10);
-    setTimeout(() => {clearInterval(Interval)}, 500);
+    Interval = setInterval(() => {if (loadedScripts.length >= 3) {OnElementalLoad(); clearInterval(Interval);}}, 5);
+    setTimeout(() => {clearInterval(Interval); if (loadedScripts.length < 3) OnElementalLoad();}, 1000);
 }
