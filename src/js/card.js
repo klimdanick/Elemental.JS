@@ -1,107 +1,102 @@
-const simpleCard = (content = [], width, height) => {
-    let el = document.createElement("div");
-    el.classList.add("elemental");
-    el.classList.add("card");
-    if (width) el.style.width = ""+width;
-    if (height) el.style.height = ""+height;
-    content.forEach(element => {
-        el.appendChild(element);
-    });
-    return {el: el, content: content};
-}
-
-const titleElement = (text) => {
-    let el = document.createElement("h1");
-    el.innerText = text;
-    el.classList.add("elemental");
-    el.classList.add("title");
-    return el;
-}
-
-const textElement = (text) => {
-    let el = document.createElement("p");
-    el.innerText = text;
-    el.classList.add("elemental");
-    el.classList.add("text");
-    return el;
-}
-
-const buttonElement = (label, callback) => {
-    let el = document.createElement("span");
-    if (typeof(label) == "string") el.innerText = label;
-    else if (isDOM(label)) el.appendChild(label);
-    el.classList.add("elemental");
-    el.classList.add("button");
-    el.onclick = callback;
-    return el;
-}
-
-const imageElement = (src = "", {alt, width, height, full = true}) => {
-    let el = document.createElement("div");
-    el.classList.add("elemental");
-    el.classList.add("image");
-    if (alt) {
-        alt.classList.add("alt");
-        el.appendChild(alt);
+class Card extends Element {
+    constructor(width, height) {
+        super();
+        this.htmlEl.classList.add("card");
+        if (width) this.htmlEl.style.width = ""+width;
+        if (height) this.htmlEl.style.height = ""+height;
     }
-    let image = document.createElement("img");
-    el.appendChild(image);
-    let preload = new Image;
-    preload.onload = function() {
-        if (alt) alt.style.display = "none";
-        image.src = this.src;
+}
+class Title extends Element {
+    constructor(content) {
+        super("h1");
+        this.htmlEl.classList.add("title");
+        this.htmlEl.innerText = content;
+    }
+}
 
-        if (full) {
-            if (!height) {
-                image.width = el.offsetWidth;
-                let aspRatio = preload.height / preload.width;
-                el.style.height = Math.floor(el.offsetWidth * aspRatio) + "px";
+class Text extends Element {
+    constructor(content) {
+        super("p");
+        this.htmlEl.classList.add("text");
+        this.htmlEl.innerText = content;
+    }
+}
+class Button extends Element {
+    constructor(label, callback) {
+        super("div");
+        if (typeof(label) == "string") this.htmlEl.innerText = label;
+        else if (isDOM(label)) this.htmlEl.appendChild(label);
+        this.htmlEl.classList.add("elemental");
+        this.htmlEl.classList.add("button");
+        this.htmlEl.onclick = callback;
+    }
+}
+
+class ImageEl extends Element {
+    constructor() {
+        super();
+        this.htmlEl.classList.add("image");
+        this.image = document.createElement("img");
+        this.htmlEl.appendChild(this.image);
+
+        let that = this;
+        this.preload = new Image;
+        this.preload.onload = function() {
+            that.image.src = this.src;
+
+            if (that.full) {
+                if (!that.height) {
+                    that.image.width = that.htmlEl.offsetWidth;
+                    let aspRatio = this.height / this.width;
+                    that.htmlEl.style.height = Math.floor(that.htmlEl.offsetWidth * aspRatio) + "px";
+                }
+                if (!that.width) {
+                    that.image.height = that.htmlEl.offsetHeight;
+                    let aspRatio = this.width / this.height;
+                    that.htmlEl.style.width = Math.floor(that.htmlEl.offsetHeight * aspRatio) + "px";
+                }
+            } else {
+                that.image.style.height = that.htmlEl.offsetHeight;
+                that.image.style.width = that.htmlEl.offsetWidth;
             }
-            if (!width) {
-                image.height = el.offsetHeight;
-                let aspRatio = preload.width / preload.height;
-                el.style.width = Math.floor(el.offsetHeight * aspRatio) + "px";
-            }
-        } else {
-            image.style.height = el.offsetHeight;
-            image.style.width = el.offsetWidth;
         }
     }
 
-    setTimeout(()=> {
-    if (!width && !height) {
-        width = "100%";
-        console.table({elWidth: el.offsetWidth, elHeight: el.offsetHeight});
-    }el.style.width = "100%";}, 1);
-    setTimeout(()=> {
-    if (width && !height) {
-        el.style.width = width;
-        el.style.height = Math.floor(el.offsetWidth * (3/4)) + "px";
-        console.table({elWidth: el.offsetWidth, elHeight: el.offsetHeight});
-    }}, 2);
-    setTimeout(()=> {
-    if (!width && height) {
-        el.style.height = height;
-        el.style.width = Math.min(Math.floor(el.offsetHeight * (4/3)) + "px", el.offsetWidth);
-        console.table({elWidth: el.offsetWidth, elHeight: el.offsetHeight});
-    }}, 3);
-    setTimeout(()=> {
-    if (width && height) {
-        el.style.width = width;
-        el.style.height = height;
-        console.table({elWidth: el.offsetWidth, elHeight: el.offsetHeight});
-    }}, 4);
-    setTimeout(()=> {
-        if (alt) {
-            alt.style.width = el.offsetWidth;
-            alt.style.height = el.offsetHeight;
-        }
-    }, 5);
-    setTimeout(()=> {
-        preload.src = src;
-    }, 6);
+    size({width, height, full = true}) {
+        setTimeout(() => {
+            if (!width && !height) {
+                width = "100%;";
+                this.htmlEl.width = width;
+            }
+            setTimeout(() => {
+                if (width && !height) {
+                    this.htmlEl.style.width = width;
+                    this.htmlEl.style.height = Math.floor(this.htmlEl.offsetWidth * (3/4)) + "px";
+                    console.log(this.htmlEl.style.width);
+                    console.log(this.htmlEl.style.height);
+                }
+                if (!width && height) {
+                    this.htmlEl.style.height = height;
+                    this.htmlEl.style.width = Math.min(Math.floor(this.htmlEl.offsetHeight * (4/3)) + "px", this.htmlEl.offsetWidth);
+                }
+                if (width && height) {
+                    this.htmlEl.style.width = width;
+                    this.htmlEl.style.height = height;
+                }
+                this.widh = width;
+                this.height = height;
+                this.full = full;
+            }, 2);
+        }, 2);
+        return this;
+    }
 
-    return el;
+    load(src = "") {
+        setTimeout(() => {this.preload.src = src;}, 5);
+        return this;
+    }
 }
+
+
 
 loadedScripts.push("/src/js/card.js");

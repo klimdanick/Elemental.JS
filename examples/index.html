@@ -1,2 +1,32 @@
-<a href="/examples/cards/card.html">cards</a>
-<a href="/examples/menus/menus.html">menus</a>
+<html>
+    <head>
+        <script src="/Elemental.js"></script>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+        <script>
+            let layout;
+            OnElementalLoad = () => {
+                layout = new Layout().setAsMain();
+                let menu1 = new SimpleMenu();
+                layout.appendChild(menu1);
+
+                let menuItems = [
+                    new SimpleMenuItem("/src/assets/messages.png", "Cards", () => {window.location.href = "cards/card.html"}),
+                    new SimpleMenuItem("/src/assets/menu.png", "Menus", () => {window.location.href = "menus/menu.html"}),
+                    new SimpleMenuItem("/src/assets/code.png", "Code", () => {window.location.href = "code/code.html"}),
+                ]
+
+                menu1.addHead(`<h1>Elemental.<span style="color: #c40f43;">js</span></h1>`);
+                menu1.appendChildren(menuItems);
+
+            }
+        </script>
+    </head>
+
+    <body>
+    </body>
+</html>
