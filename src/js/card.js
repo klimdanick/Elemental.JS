@@ -97,4 +97,6 @@ class ImageEl extends Element {
     }
 }
 
+
+
 loadedScripts.push("/src/js/card.js");

@@ -9,20 +9,64 @@
         </style>
         <script>
 
+            let titles;
             let layout;
-
+            let menu1, menu2;
+            
             OnElementalLoad = () => {
-                new Layout("column").setAsMain().appendChild(layout = new Layout());
-                layout.style.width = "100%";
-                let menu1 = new SimpleMenu("left");
+                
+                new Layout("column").setAsMain().appendChild(layout = new Layout("row"));
+                menu1 = new SimpleMenu();
+                menu2 = new DropDownMenu();
+                menu3 = new HamburgerMenu();
+                menu4 = new TabMenu();
                 layout.appendChild(menu1);
+                layout.appendChild(menu2);
+                layout.appendChild(menu3);
+                layout.appendChild(menu4);
+                layout.style.alignItems = "start";
 
                 let menuItems = [
-                    new SimpleMenuItem("menu.png", "Home", () => {console.log("click")}),
-                    new SimpleMenuItem("menu.png", "About", () => {console.log("click")})
+                    new SimpleMenuItem("/src/assets/home.png", "Home", () => {}),
+                    new SimpleMenuItem("/src/assets/search.png", "Search", () => {}),
+                    new SimpleMenuItem("/src/assets/notifications.png", "Notifications", () => {}),
+                    new SimpleMenuItem("/src/assets/messages.png", "Messages", () => {}),
                 ]
 
+                menu1.addHead(`<h2>Simple</h2>`);
                 menu1.appendChildren(menuItems);
+                menu1.select(menuItems[0]);
+
+                let menuItems2 = [
+                    new SimpleMenuItem("/src/assets/home.png", "Home", () => {}),
+                    new SimpleMenuItem("/src/assets/search.png", "Search", () => {}),
+                    new SimpleMenuItem("/src/assets/notifications.png", "Notifications", () => {}),
+                    new SimpleMenuItem("/src/assets/messages.png", "Messages", () => {}),
+                ]
+
+                menu2.addHead(`<h2>DropDown</h2>`);
+                menu2.appendChildren(menuItems2);
+                menu2.select(menuItems2[0]);
+
+                let menuItems3 = [
+                    new SimpleMenuItem("/src/assets/home.png", "Home", () => {}),
+                    new SimpleMenuItem("/src/assets/search.png", "Search", () => {}),
+                    new SimpleMenuItem("/src/assets/notifications.png", "Notifications", () => {}),
+                    new SimpleMenuItem("/src/assets/messages.png", "Messages", () => {}),
+                ]
+
+                menu3.addHead(`<h2>Hamburger</h2>`);
+                menu3.appendChildren(menuItems3);
+                menu3.select(menuItems3[0]);
+
+                let menuItems4 = [
+                    new TabMenuItem("/src/assets/home.png", () => {}),
+                    new TabMenuItem("/src/assets/search.png", () => {}),
+                    new TabMenuItem("/src/assets/notifications.png", () => {}),
+                    new TabMenuItem("/src/assets/messages.png", () => {}),
+                ]
+                menu4.appendChildren(menuItems4);
+                menu4.select(menuItems4[0]);
             }
         </script>
     </head>
