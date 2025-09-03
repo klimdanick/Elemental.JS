@@ -382,3 +382,10 @@ class HeadMenuItem extends Button {
         this.preload.src = icon;
     }
 }
+
+class Input extends Element {
+    constructor(type = "text") {
+        super("input");
+        this.htmlEl.type = type;
+    }
+}

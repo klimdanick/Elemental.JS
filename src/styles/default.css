@@ -195,3 +195,22 @@ Layout {
 .menu .selected {
     background-color: var(--secondary);
 }
+
+input {
+    font-size: 1.5em;
+    background: var(--level1);
+    display: block;
+    width: 8em;
+    color: var(--text);
+    border: 1px solid var(--level1);
+    border-radius: 10px;
+    padding: .5em 1em;
+    transition: .2s ease all;
+    margin: 0;
+    font-family: inherit;
+    line-height: 1.15;
+}
+
+input:focus {
+    border: 1px solid var(--text);
+  }
