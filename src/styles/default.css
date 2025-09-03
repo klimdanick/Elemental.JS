@@ -213,4 +213,8 @@ input {
 
 input:focus {
     border: 1px solid var(--text);
-  }
+}
+
+input[type="button"]:active {
+    background: var(--level0);
+}
