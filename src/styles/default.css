@@ -4,7 +4,11 @@
     --primary: #b81e44;
     --secondary: #5DB7DE;
     --text: #fff;
-    --trasition1: 200ms;
+    --trasition1: 0s;
+}
+
+.hljs {
+    background: var(--level1); 
 }
 
 Layout, Element {
