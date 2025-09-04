@@ -10,21 +10,19 @@
         <script>
 
             let layout;
-            let toast1, toast2;
+            let toast1;
             let i = 0;
             
             OnElementalLoad = () => {
+                layout = new Layout("column").setAsMain();
 
                 toast1 = new Toast("simple toast");
-                
-                new Layout("column").setAsMain().appendChild(layout = new Layout("row"));
-                
-                layout.appendChild(`<input type="button" value="click me!" id="toast1" onclick="toast1.play()">`);
             }
         </script>
     </head>
 
     <body>
         <h1>Toast example!</h1>
+        <input type="button" value="click me!" id="toast1" onclick="toast1.message = 'toast '+(i++); toast1.play();">
     </body>
 </html>

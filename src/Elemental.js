@@ -1,6 +1,8 @@
 let loadedScripts = [];
 let loadedStyles = [];
 
+let elementalJSloaded = false;
+
 let mainLayout;
 let toastPanel;
 
@@ -33,10 +35,10 @@ let OnElementalLoad;
 let Interval;
 
 AttachScript("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js");
-AttachScript("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js");
+//AttachScript("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js");
 AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css");
-AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javescript.min.js");
-AttachStyle("/styles/default.css");
+//AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javescript.min.js");
+AttachStyle("https://vps.klimdanick.nl/elementaljs/styles/default.css");
 window.onload = () => {
     OnElementalLoad();
     hljs.highlightAll();
@@ -44,6 +46,8 @@ window.onload = () => {
     toastPanel = new Layout("column-reverse");
     toastPanel.htmlEl.id = "toastPanel";
     if (mainLayout) mainLayout.appendChild(toastPanel);
+
+    elementalJSloaded = true;
 
     /*
     let animationFix = (el) => {
@@ -273,7 +277,7 @@ class SimpleMenu extends Element {
         }
     }
 
-    select(el) {
+    select(el, exec = true) {
         for (let i = 0; i < this.items.length; i++) {
             let e = this.items[i];
             if (e instanceof SimpleMenuItem) e.htmlEl.classList.remove("selected");
@@ -282,6 +286,14 @@ class SimpleMenu extends Element {
         if (el instanceof SimpleMenuItem) {
             el.htmlEl.classList.add("selected");
             this.selected = el;
+            if (exec) {
+                let inter = setInterval(()=>{
+                    if (elementalJSloaded) {
+                        el.callback();
+                        clearInterval(inter);
+                    }
+                }, 10)
+            }
         }
         if (el instanceof HTMLElement) {
             el.classList.add("selected");
@@ -353,7 +365,8 @@ class TabMenu extends HamburgerMenu {
 
 class SimpleMenuItem extends Button {
     constructor(icon = "menu.png", label = "", callback = () => {}) {
-        super("", () => {this.menu.select(this); callback()});
+        super("", () => {this.menu.select(this, false); callback()});
+        this.callback = callback;
         this.htmlEl.classList.add("MenuItem");
         this.icon = document.createElement("img");
         // this.htmlEl.appendChild(this.icon)
@@ -412,8 +425,7 @@ class Toast extends Element {
     }
 
     play(duration = 2000) {
-        let clone = new Toast();
-        clone.htmlEl.innerHTML = this.htmlEl.innerHTML;
+        let clone = new Toast(this.message);
         toastPanel.appendChild(clone);
         toastPanel.htmlEl.style.justifyContent = "flex-start";
         let currentHeight = parseFloat(toastPanel.htmlEl.style.height) || 0;
