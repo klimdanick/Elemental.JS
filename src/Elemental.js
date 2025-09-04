@@ -1,6 +1,9 @@
 let loadedScripts = [];
 let loadedStyles = [];
 
+let mainLayout;
+let toastPanel;
+
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function isDOM(Obj) {
@@ -38,6 +41,10 @@ window.onload = () => {
     OnElementalLoad();
     hljs.highlightAll();
 
+    toastPanel = new Layout("column-reverse");
+    toastPanel.htmlEl.id = "toastPanel";
+    if (mainLayout) mainLayout.appendChild(toastPanel);
+
     /*
     let animationFix = (el) => {
         let tmp = el.style.transitionDuration;
@@ -63,6 +70,12 @@ class Element {
             this.htmlEl.innerHTML += el;
         return this;
     }
+
+    removeChild(el) {
+        if (el instanceof Element)
+            this.htmlEl.removeChild(el.htmlEl);
+        return this;
+    }
 }
 
 class Layout extends Element{
@@ -82,6 +95,7 @@ class Layout extends Element{
         body.innerHTML = "";
         body.appendChild(this.htmlEl);
         this.htmlEl.style.height = "100%";
+        mainLayout = this;
         return this;
     }
 }
@@ -387,5 +401,29 @@ class Input extends Element {
     constructor(type = "text") {
         super("input");
         this.htmlEl.type = type;
+    }
+}
+
+class Toast extends Element {
+    constructor(message = "") {
+        super("Toast");
+        this.message = message;
+        this.appendChild(this.message);
+    }
+
+    play(duration = 2000) {
+        let clone = new Toast();
+        clone.htmlEl.innerHTML = this.htmlEl.innerHTML;
+        toastPanel.appendChild(clone);
+        toastPanel.htmlEl.style.justifyContent = "flex-start";
+        let currentHeight = parseFloat(toastPanel.htmlEl.style.height) || 0;
+        toastPanel.htmlEl.style.height = (currentHeight + 63) + "px";
+        
+        setTimeout(() => {
+            toastPanel.removeChild(clone);
+            toastPanel.htmlEl.style.justifyContent = "flex-end";
+            let currentHeight = parseFloat(toastPanel.htmlEl.style.height) || 0;
+            toastPanel.htmlEl.style.height = (currentHeight - 63) + "px";
+        }, duration);
     }
 }

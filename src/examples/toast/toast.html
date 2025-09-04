@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <script src="/Elemental.js"></script>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+        <script>
+
+            let layout;
+            let toast1, toast2;
+            let i = 0;
+            
+            OnElementalLoad = () => {
+
+                toast1 = new Toast("simple toast");
+                
+                new Layout("column").setAsMain().appendChild(layout = new Layout("row"));
+                
+                layout.appendChild(`<input type="button" value="click me!" id="toast1" onclick="toast1.play()">`);
+            }
+        </script>
+    </head>
+
+    <body>
+        <h1>Toast example!</h1>
+    </body>
+</html>

@@ -218,3 +218,20 @@ input:focus {
 input[type="button"]:active {
     background: var(--level0);
 }
+
+Toast {
+    font-size: 20px;
+    background: var(--primary);
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+#toastPanel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    transition: 200ms;
+    justify-content: flex-end;
+    height: 0px;
+}
