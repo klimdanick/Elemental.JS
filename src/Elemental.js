@@ -49,6 +49,12 @@ window.onload = () => {
 
     elementalJSloaded = true;
 
+    let taostPanelInterval = setInterval(() => {
+        if (!mainLayout.contains(toastPanel)) {
+            if (mainLayout) mainLayout.appendChild(toastPanel);
+        }
+    }, 1000);
+
     /*
     let animationFix = (el) => {
         let tmp = el.style.transitionDuration;
