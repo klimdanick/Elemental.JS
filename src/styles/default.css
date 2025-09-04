@@ -234,4 +234,6 @@ Toast {
     transition: 200ms;
     justify-content: flex-end;
     height: 0px;
+    background: none;
+    z-index: -1;
 }
