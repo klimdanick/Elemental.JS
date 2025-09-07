@@ -40,6 +40,7 @@ AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/v
 //AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javescript.min.js");
 AttachStyle("https://vps.klimdanick.nl/elementaljs/styles/default.css");
 window.onload = () => {
+    document.documentElement.classList.add('loaded');
     OnElementalLoad();
     hljs.highlightAll();
 

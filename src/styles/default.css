@@ -7,6 +7,22 @@
     --trasition1: 0s;
 }
 
+html {
+    background: var(--level0);
+}
+
+html > * {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 360ms ease, visibility 0s linear 360ms;
+}
+
+html.loaded > * {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 360ms ease, visibility 0s linear 0s;
+}
+
 .hljs {
     background: var(--level1); 
 }
