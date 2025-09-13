@@ -138,6 +138,7 @@ Layout {
     z-index: 1;
     margin: 0px !important;
     object-fit: cover;
+    transition: height 1s ease-in-out, width 1s ease-in-out;
 }
 
 .image .alt {

@@ -72,6 +72,9 @@ class Element {
     constructor(tagName = "Element") {
         this.htmlEl = document.createElement(tagName);
         this.style = this.htmlEl.style;
+        this.htmlEl.addEventListener("click", (e) => this.onClick(e));
+        this.htmlEl.addEventListener("mouseenter", (e) => this.onHover(e));
+        this.htmlEl.addEventListener("mouseleave", (e) => this.onLeave(e));
     }
 
     appendChild(el) {
@@ -87,6 +90,12 @@ class Element {
             this.htmlEl.removeChild(el.htmlEl);
         return this;
     }
+
+    onClick(e) {}
+
+    onHover(e) {}
+
+    onLeave(e) {}
 }
 
 class Layout extends Element{
@@ -216,6 +225,8 @@ class ImageEl extends Element {
                 width = "100%;";
                 this.htmlEl.width = width;
             }
+            if (width) this.image.style.widh = width;
+            if (height) this.image.style.height = height;
             setTimeout(() => {
                 if (width && !height) {
                     this.htmlEl.style.width = width;
