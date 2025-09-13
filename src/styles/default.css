@@ -5,6 +5,11 @@
     --secondary: #5DB7DE;
     --text: #fff;
     --trasition1: 0s;
+    --CINDER_BLACK: #081017;
+	--DEBIAN_RED: #d70e48;
+	--AQUA_GREEN: #05d993;
+	--TURMERIC_YELLOW: #d0b747;
+	--CURIOS_BLUE: #299ad0;
 }
 
 html {
