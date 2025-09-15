@@ -5,6 +5,27 @@
     --secondary: #5DB7DE;
     --text: #fff;
     --trasition1: 0s;
+
+    --CURIOS_BLUE: #299ad0;
+    --TURMERIC_YELLOW: #d0b747;
+    --AQUA_GREEN: #05d993;
+    --DEBIAN_RED: #d70e48;
+}
+
+html {
+    background: var(--level0);
+}
+
+html > * {
+    /* opacity: 0; */
+    /* visibility: hidden; */
+    /* transition: opacity 360ms ease, visibility 0s linear 360ms; */
+}
+
+html.loaded > * {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 360ms ease, visibility 0s linear 0s;
 }
 
 .hljs {
@@ -108,6 +129,7 @@ Layout {
     border-radius: 10px;
     overflow: hidden;
     margin: 0;
+    transition: height 1s ease-in-out, width 1s ease-in-out;
 }
 
 .image img {
@@ -116,6 +138,7 @@ Layout {
     z-index: 1;
     margin: 0px !important;
     object-fit: cover;
+    transition: height 1s ease-in-out, width 1s ease-in-out;
 }
 
 .image .alt {
