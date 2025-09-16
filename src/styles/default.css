@@ -1,35 +1,41 @@
 :root {
-    --level0: #1d1d1d;
-    --level1: #2c2c2c;
-    --primary: #b81e44;
-    --secondary: #5DB7DE;
-    --text: #fff;
-    --trasition1: 0s;
-
+    --BLACK_PEARL: #0c1822;
+    --CINDER_BLACK: #081017;
     --CURIOS_BLUE: #299ad0;
     --TURMERIC_YELLOW: #d0b747;
     --AQUA_GREEN: #05d993;
     --DEBIAN_RED: #d70e48;
+
+    --DARK_JUNGLE: #1d1d1d;
+    --HEAVY_METAL: #2c2c2c;
+    --level0: var(--CINDER_BLACK);
+    --level1: var(--BLACK_PEARL);
+    --primary: var(--DEBIAN_RED);
+    --secondary: var(--CURIOS_BLUE);
+    --text: #fff;
+    --trasition1: 0s;
+
 }
 
 html {
     background: var(--level0);
+	scroll-snap-type: both mandatory;
 }
 
 html > * {
-    /* opacity: 0; */
-    /* visibility: hidden; */
-    /* transition: opacity 360ms ease, visibility 0s linear 360ms; */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 500ms ease, visibility 0s linear 500ms;
 }
 
 html.loaded > * {
     opacity: 1;
     visibility: visible;
-    transition: opacity 360ms ease, visibility 0s linear 0s;
+    transition: opacity 500ms ease, visibility 0s linear 0s;
 }
 
 .hljs {
-    background: var(--level1); 
+    background: var(--level0); 
 }
 
 Layout, Element {
@@ -106,7 +112,7 @@ Layout {
     margin: 8px;
 }
 
-.card .image {
+.card .image, .card .video {
     margin: 10px;
     margin-left: 0px !important;
 }
@@ -124,7 +130,7 @@ Layout {
     filter: brightness(70%);
 }
 
-.image {
+.image, .video {
     /* background-color: var(--level1); */
     border-radius: 10px;
     overflow: hidden;
@@ -132,7 +138,7 @@ Layout {
     transition: height 1s ease-in-out, width 1s ease-in-out;
 }
 
-.image img {
+.image img, .video video {
     left: 0;
     top: 0;
     z-index: 1;
@@ -259,4 +265,16 @@ Toast {
     height: 0px;
     background: none;
     z-index: 99999;
+}
+
+.panel {
+	width: 100%;	
+	height: 100vh;
+	background-color: var(--level0);
+	scroll-snap-align: center;
+	justify-content: flex-start;
+}
+
+.panel h1 {
+	z-index: 1;
 }

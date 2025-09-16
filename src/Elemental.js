@@ -6,6 +6,16 @@ let elementalJSloaded = false;
 let mainLayout;
 let toastPanel;
 
+const root = document.querySelector(':root');
+let CINDER_BLACK;
+let BLACK_PEARL;
+let DEBIAN_RED;
+let AQUA_GREEN;
+let TURMERIC_YELLOW;
+let CURIOS_BLUE;
+let level0;
+let level1;
+
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function isDOM(Obj) {
@@ -35,12 +45,23 @@ let OnElementalLoad;
 let Interval;
 
 AttachScript("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js");
-//AttachScript("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js");
 AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css");
-//AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javescript.min.js");
-AttachStyle("https://vps.klimdanick.nl/elementaljs/styles/default.css");
+AttachStyle("https://klimdanick.nl/elementaljs/styles/default.css");
+
+window.onpageshow = () => {
+    setTimeout(() => {document.documentElement.classList.add('loaded');}, 500);
+}
+
 window.onload = () => {
-    document.documentElement.classList.add('loaded');
+    CINDER_BLACK = getComputedStyle(root).getPropertyValue('--CINDER_BLACK');
+    BLACK_PEARL = getComputedStyle(root).getPropertyValue('--BLACK_PEARL');
+    DEBIAN_RED = getComputedStyle(root).getPropertyValue('--DEBIAN_RED');
+    AQUA_GREEN = getComputedStyle(root).getPropertyValue('--AQUA_GREEN');
+    TURMERIC_YELLOW = getComputedStyle(root).getPropertyValue('--TURMERIC_YELLOW');
+    CURIOS_BLUE = getComputedStyle(root).getPropertyValue('--CURIOS_BLUE');
+    level0 = getComputedStyle(root).getPropertyValue('--level0');
+    level1 = getComputedStyle(root).getPropertyValue('--level1');
+
     OnElementalLoad();
     hljs.highlightAll();
 
@@ -51,7 +72,7 @@ window.onload = () => {
     elementalJSloaded = true;
 
     let taostPanelInterval = setInterval(() => {
-        if (!mainLayout.htmlEl.contains(toastPanel.htmlEl)) {
+        if (mainLayout && !mainLayout.htmlEl.contains(toastPanel.htmlEl)) {
             if (mainLayout) mainLayout.appendChild(toastPanel);
         }
     }, 1000);
@@ -253,6 +274,91 @@ class ImageEl extends Element {
         return this;
     }
 }
+
+class VideoEl extends Element {
+    constructor() {
+        super();
+        this.htmlEl.classList.add("video");
+
+        // Create <video> element
+        this.video = document.createElement("video");
+        this.video.setAttribute("playsinline", ""); // mobile safe
+        this.video.setAttribute("preload", "auto");
+        this.video.setAttribute("controls", "");   // show controls by default
+        this.htmlEl.appendChild(this.video);
+
+        this.full = true;
+        this.width = null;
+        this.height = null;
+
+        // Preloader (we preload metadata instead of full video)
+        this.preload = document.createElement("video");
+        this.preload.preload = "metadata";
+
+        this.preload.onloadedmetadata = () => {
+            if (this.full) {
+                if (!this.height) {
+                    this.video.width = this.htmlEl.offsetWidth;
+                    let aspRatio = this.preload.videoHeight / this.preload.videoWidth;
+                    this.htmlEl.style.height = Math.floor(this.htmlEl.offsetWidth * aspRatio) + "px";
+                }
+                if (!this.width) {
+                    this.video.height = this.htmlEl.offsetHeight;
+                    let aspRatio = this.preload.videoWidth / this.preload.videoHeight;
+                    this.htmlEl.style.width = Math.floor(this.htmlEl.offsetHeight * aspRatio) + "px";
+                }
+            } else {
+                this.video.style.height = this.htmlEl.offsetHeight + "px";
+                this.video.style.width = this.htmlEl.offsetWidth + "px";
+            }
+
+            // Once metadata is loaded, set src
+            this.video.src = this.preload.src;
+        };
+    }
+
+    size({ width, height, full = true }) {
+        setTimeout(() => {
+            if (!width && !height) {
+                width = "100%";
+                this.htmlEl.style.width = width;
+            }
+            if (width) this.video.style.width = width;
+            if (height) this.video.style.height = height;
+
+            setTimeout(() => {
+                if (width && !height) {
+                    this.htmlEl.style.width = width;
+                    this.htmlEl.style.height = Math.floor(this.htmlEl.offsetWidth * (9 / 16)) + "px";
+                }
+                if (!width && height) {
+                    this.htmlEl.style.height = height;
+                    this.htmlEl.style.width = Math.min(Math.floor(this.htmlEl.offsetHeight * (16 / 9)) + "px", this.htmlEl.offsetWidth);
+                }
+                if (width && height) {
+                    this.htmlEl.style.width = width;
+                    this.htmlEl.style.height = height;
+                }
+
+                this.width = width;
+                this.height = height;
+                this.full = full;
+            }, 2);
+        }, 2);
+
+        return this;
+    }
+
+    load(src = "", autoplay = false, loop = false) {
+        setTimeout(() => {
+            this.preload.src = src;
+            this.video.autoplay = autoplay;
+            this.video.loop = loop;
+        }, 5);
+        return this;
+    }
+}
+
 
 class SimpleMenu extends Element {
     constructor(stick) {
@@ -456,4 +562,29 @@ class Toast extends Element {
             toastPanel.htmlEl.style.height = (currentHeight - 63) + "px";
         }, duration);
     }
+}
+
+class Panel extends Layout {
+	constructor(tag) {
+		super("column");
+		this.htmlEl.classList.add("panel");
+		this.htmlEl.classList.add(tag);
+	}
+}
+
+class Canvas extends Element {
+	constructor() {
+        super();
+		this.canvas = document.createElement("canvas");
+		this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+		this.ctx = this.canvas.getContext("2d");
+        this.htmlEl.appendChild(this.canvas);
+		this.init();
+		this.interval = setInterval(() => {this.update()}, 2);
+	}
+	
+	init() {}
+	
+	update() {}
 }
