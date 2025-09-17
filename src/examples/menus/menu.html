@@ -1,7 +1,6 @@
 <html>
     <head>
         <script src="https://klimdanick.nl/elementaljs/Elemental.js"></script>
-        <link rel="stylesheet" href="https://klimdanick.nl/elementaljs/styles/default.css">
         <style>
             body {
                 margin: 0;
@@ -11,20 +10,26 @@
         <script>
 
             let titles;
-            let layout;
+            let layout, layout2;
             let menu1, menu2;
             
             OnElementalLoad = () => {
                 
-                new Layout("column").setAsMain().appendChild(layout = new Layout("row"));
+                new Layout("column").setAsMain().appendChild(layout2 = new Layout("column")).appendChild(layout = new Layout("row"));
                 menu1 = new SimpleMenu();
                 menu2 = new DropDownMenu();
                 menu3 = new HamburgerMenu();
                 menu4 = new TabMenu();
+                menu5 = new SimpleMenu("row");
+                menu6 = new HamburgerMenu("row");
+                menu7 = new TabMenu("row");
                 layout.appendChild(menu1);
                 layout.appendChild(menu2);
                 layout.appendChild(menu3);
                 layout.appendChild(menu4);
+                layout2.appendChild(menu5);
+                layout2.appendChild(menu6);
+                layout2.appendChild(menu7);
                 layout.style.alignItems = "start";
 
                 let menuItems = [
@@ -68,6 +73,36 @@
                 ]
                 menu4.appendChildren(menuItems4);
                 menu4.select(menuItems4[0]);
+
+                let menuItems5 = [
+                    new SimpleMenuItem("/assets/home.png", "Home"),
+                    new SimpleMenuItem("/assets/search.png", "Search"),
+                    new SimpleMenuItem("/assets/notifications.png", "Notifications"),
+                    new SimpleMenuItem("/assets/messages.png", "Messages"),
+                ]
+                // menu5.addHead(`<h2>Row</h2>`);
+                menu5.appendChildren(menuItems5);
+                menu5.select(menuItems5[0]);
+
+                let menuItems6 = [
+                    new SimpleMenuItem("/assets/home.png", "Home"),
+                    new SimpleMenuItem("/assets/search.png", "Search"),
+                    new SimpleMenuItem("/assets/notifications.png", "Notifications"),
+                    new SimpleMenuItem("/assets/messages.png", "Messages"),
+                ]
+                menu6.addHead(``);
+                menu6.appendChildren(menuItems6);
+                menu6.select(menuItems6[0]);
+
+                let menuItems7 = [
+                    new TabMenuItem("/assets/home.png", () => {}),
+                    new TabMenuItem("/assets/search.png", () => {}),
+                    new TabMenuItem("/assets/notifications.png", () => {}),
+                    new TabMenuItem("/assets/messages.png", () => {}),
+                ]
+                // menu5.addHead(`<h2>Row</h2>`);
+                menu7.appendChildren(menuItems7);
+                menu7.select(menuItems7[0]);
             }
         </script>
     </head>

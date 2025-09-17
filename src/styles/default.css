@@ -13,7 +13,7 @@
     --primary: var(--DEBIAN_RED);
     --secondary: var(--CURIOS_BLUE);
     --text: #fff;
-    --trasition1: 0s;
+    --trasitionDuration: 0.5s;
 
 }
 
@@ -43,7 +43,7 @@ Layout, Element {
     color: var(--text);
     margin: 20px;
     transition: all;
-    transition-duration: var(--trasition1);
+    transition-duration: var(--trasitionDuration);
 }
 
 
@@ -165,15 +165,17 @@ Layout {
     align-items: center;
     border-radius: 10px;
     overflow: hidden;
-    transition: max-height,max-width 0.5s ease-out;
 }
 
-.DropDownMenu {
-    transition: max-height 0.5s ease-out !important;
+/* Horizontal variation */
+.menu.row {
+    flex-direction: row;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
-.HamburgerMenu {
-    transition: max-width 0.5s ease-out !important;
+.DropDownMenu, .HamburgerMenu, .HamburgerMenu .menuItem {
+    transition: max-width var(--trasitionDuration) ease-out, max-height var(--trasitionDuration) ease-out !important;
 }
 
 .menu .MenuItem {
@@ -191,7 +193,7 @@ Layout {
 .menuItem img {
     height: 100%;
     width: 1em;
-    margin-right: 1em;
+    margin-right: 1.1em;
     display: inline;
 }
 
@@ -217,8 +219,27 @@ Layout {
     max-height: 3em !important;
 }
 
-.HamburgerMenu.closed {
+.HamburgerMenu.row {
+    width: fit-content;
+}
+
+.HamburgerMenu.column {
+    max-width: 11em;
+}
+
+.HamburgerMenu.column.closed {
     max-width: 1em !important;
+}
+
+.HamburgerMenu.row .menuItem {
+    max-width: 168px;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    width: max-content;
+}
+
+.HamburgerMenu.row.closed .menuItem {
+    max-width: 1rem !important;
 }
 
 .menu .selected {

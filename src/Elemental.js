@@ -361,9 +361,10 @@ class VideoEl extends Element {
 
 
 class SimpleMenu extends Element {
-    constructor(stick) {
+    constructor(dir = "column", stick) {
         super();
         this.htmlEl.classList.add("menu");
+        this.htmlEl.classList.add(dir);
         this.items = [];
         if (stick == "left") {
             this.style.marginRight = "auto";
@@ -427,8 +428,8 @@ class SimpleMenu extends Element {
 }
 
 class DropDownMenu extends SimpleMenu {
-    constructor(stick) {
-        super(stick);
+    constructor(dir = "column", stick) {
+        super(dir, stick);
         this.htmlEl.classList.add("DropDownMenu")
         setTimeout(() => {
             this.htmlEl.style.maxHeight = this.htmlEl.offsetHeight;
@@ -450,12 +451,12 @@ class DropDownMenu extends SimpleMenu {
 }
 
 class HamburgerMenu extends SimpleMenu {
-    constructor(stick) {
-        super(stick);
+    constructor(dir = "column", stick) {
+        super(dir, stick);
         this.htmlEl.classList.add("HamburgerMenu")
         setTimeout(() => {
-            this.width = this.htmlEl.offsetWidth;
-            this.htmlEl.style.maxWidth = this.htmlEl.offsetWidth;
+            // this.width = this.htmlEl.offsetWidth;
+            // this.htmlEl.style.maxWidth = this.htmlEl.offsetWidth;
             setTimeout(() => {
                 this.open = false;
                 this.htmlEl.classList.add("closed")
@@ -477,8 +478,8 @@ class HamburgerMenu extends SimpleMenu {
 }
 
 class TabMenu extends HamburgerMenu {
-    constructor(stick) {
-        super(stick);
+    constructor(dir = "column", stick) {
+        super(dir, stick);
         this.htmlEl.classList.add("closed");
     }
 
