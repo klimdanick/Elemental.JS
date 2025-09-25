@@ -5,6 +5,9 @@
     --TURMERIC_YELLOW: #d0b747;
     --AQUA_GREEN: #05d993;
     --DEBIAN_RED: #d70e48;
+    --EMINENCE_PURPLE: #6E2594;
+    /*#9A3FA1;*/
+    --STRAWBERRY_MAGENTA: #FF499E;
 
     --DARK_JUNGLE: #1d1d1d;
     --HEAVY_METAL: #2c2c2c;
@@ -19,26 +22,27 @@
 
 html {
     background: var(--level0);
-	scroll-snap-type: both mandatory;
+    scroll-snap-type: both mandatory;
 }
 
-html > * {
+html>* {
     opacity: 0;
     visibility: hidden;
     transition: opacity 500ms ease, visibility 0s linear 500ms;
 }
 
-html.loaded > * {
+html.loaded>* {
     opacity: 1;
     visibility: visible;
     transition: opacity 500ms ease, visibility 0s linear 0s;
 }
 
 .hljs {
-    background: var(--level0); 
+    background: var(--level0);
 }
 
-Layout, Element {
+Layout,
+Element {
     font-family: 'D-DIN-Bold', Arial, Verdana, sans-serif;
     color: var(--text);
     margin: 20px;
@@ -112,7 +116,8 @@ Layout {
     margin: 8px;
 }
 
-.card .image, .card .video {
+.card .image,
+.card .video {
     margin: 10px;
     margin-left: 0px !important;
 }
@@ -130,7 +135,8 @@ Layout {
     filter: brightness(70%);
 }
 
-.image, .video {
+.image,
+.video {
     /* background-color: var(--level1); */
     border-radius: 10px;
     overflow: hidden;
@@ -138,7 +144,8 @@ Layout {
     transition: height 1s ease-in-out, width 1s ease-in-out;
 }
 
-.image img, .video video {
+.image img,
+.video video {
     left: 0;
     top: 0;
     z-index: 1;
@@ -174,7 +181,9 @@ Layout {
     padding-right: 0px;
 }
 
-.DropDownMenu, .HamburgerMenu, .HamburgerMenu .menuItem {
+.DropDownMenu,
+.HamburgerMenu,
+.HamburgerMenu .menuItem {
     transition: max-width var(--trasitionDuration) ease-out, max-height var(--trasitionDuration) ease-out !important;
 }
 
@@ -208,7 +217,7 @@ Layout {
     border-radius: 0;
     padding: 10px;
     height: 1.5em;
-    
+
 }
 
 .menuHead {
@@ -269,6 +278,80 @@ input[type="button"]:active {
     background: var(--level0);
 }
 
+.ColorPicker {
+    width: fit-content;
+    height: fit-content;
+    background: var(--level1);
+    border-radius: 10px;
+}
+
+.HuePicker {
+    display: block;
+    width: 9em;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    cursor: crosshair;
+    background: conic-gradient(
+            from 90deg, var(--DEBIAN_RED), var(--TURMERIC_YELLOW), var(--AQUA_GREEN), var(--CURIOS_BLUE), var(--STRAWBERRY_MAGENTA), var(--DEBIAN_RED)
+            /* red, yellow, lime, cyan, blue, magenta, red */
+        );
+    position: relative;
+}
+
+.SatPicker {
+    display: block;
+    width: 9em;
+    height: 1em;
+    border-radius: 5px;
+    background: linear-gradient(to right, hsl(0, 0%, 50%), hsl(0, 100%, 50%));
+    position: relative;
+    overflow: hidden;
+}
+
+.LigPicker {
+    display: block;
+    width: 1em;
+    height: 9em;
+    border-radius: 5px;
+    background: linear-gradient(to bottom, hsl(0, 100%, 0%), hsl(0, 100%, 50%), hsl(0, 100%, 100%));
+    position: relative;
+    overflow: hidden;
+}
+
+.HuePicker .pointer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    height: 2px;
+    background: white;
+    transform-origin: left center;
+    transform: rotate(0deg);
+    margin: 0;
+}
+
+.SatPicker .pointer {
+    position: absolute;
+    top: 0%;
+    left: 88%;
+    width: 2px;
+    height: 100%;
+    background: white;
+    transform-origin: left center;
+    margin: 0;
+}
+
+.LigPicker .pointer {
+    position: absolute;
+    top: 45%;
+    left: 0%;
+    width: 100%;
+    height: 2px;
+    background: white;
+    transform-origin: left center;
+    margin: 0;
+}
+
 Toast {
     font-size: 20px;
     background: var(--primary);
@@ -289,13 +372,13 @@ Toast {
 }
 
 .panel {
-	width: 100%;	
-	height: 100vh;
-	background-color: var(--level0);
-	scroll-snap-align: center;
-	justify-content: flex-start;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--level0);
+    scroll-snap-align: center;
+    justify-content: flex-start;
 }
 
 .panel h1 {
-	z-index: 1;
+    z-index: 1;
 }

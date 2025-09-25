@@ -13,6 +13,8 @@ let DEBIAN_RED;
 let AQUA_GREEN;
 let TURMERIC_YELLOW;
 let CURIOS_BLUE;
+let EMINENCE_PURPLE;
+let STRAWBERRY_MAGENTA;
 let level0;
 let level1;
 
@@ -22,7 +24,7 @@ function isDOM(Obj) {
     return Obj instanceof Element;
 }
 
-const stringToHTML =  string=> new DOMParser().parseFromString(string, 'text/html').body.firstChild
+const stringToHTML = string => new DOMParser().parseFromString(string, 'text/html').body.firstChild
 
 function AttachScript(src) {
     if (loadedScripts.includes(src)) return;
@@ -49,7 +51,7 @@ AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/v
 AttachStyle("https://klimdanick.nl/elementaljs/styles/default.css");
 
 window.onpageshow = () => {
-    setTimeout(() => {document.documentElement.classList.add('loaded');}, 500);
+    setTimeout(() => { document.documentElement.classList.add('loaded'); }, 500);
 }
 
 window.onload = () => {
@@ -59,6 +61,8 @@ window.onload = () => {
     AQUA_GREEN = getComputedStyle(root).getPropertyValue('--AQUA_GREEN');
     TURMERIC_YELLOW = getComputedStyle(root).getPropertyValue('--TURMERIC_YELLOW');
     CURIOS_BLUE = getComputedStyle(root).getPropertyValue('--CURIOS_BLUE');
+    EMINENCE_PURPLE = getComputedStyle(root).getPropertyValue('--EMINENCE_PURPLE');
+    STRAWBERRY_MAGENTA = getComputedStyle(root).getPropertyValue('--STRAWBERRY_MAGENTA');
     level0 = getComputedStyle(root).getPropertyValue('--level0');
     level1 = getComputedStyle(root).getPropertyValue('--level1');
 
@@ -112,14 +116,14 @@ class Element {
         return this;
     }
 
-    onClick(e) {}
+    onClick(e) { }
 
-    onHover(e) {}
+    onHover(e) { }
 
-    onLeave(e) {}
+    onLeave(e) { }
 }
 
-class Layout extends Element{
+class Layout extends Element {
     constructor(direction) {
         super("Layout");
         if (direction == "grid") {
@@ -173,15 +177,15 @@ const sideAndTopBarLayout = () => {
     layout.classList.add("sideAndTopBarLayoutMain");
     document.getElementsByTagName("body")[0].appendChild(layout);
 
-    return {sidebar, topbar, content: layout};
+    return { sidebar, topbar, content: layout };
 }
 
 class Card extends Element {
     constructor(width, height) {
         super();
         this.htmlEl.classList.add("card");
-        if (width) this.htmlEl.style.width = ""+width;
-        if (height) this.htmlEl.style.height = ""+height;
+        if (width) this.htmlEl.style.width = "" + width;
+        if (height) this.htmlEl.style.height = "" + height;
     }
 }
 class Title extends Element {
@@ -202,7 +206,7 @@ class Text extends Element {
 class Button extends Element {
     constructor(label, callback) {
         super("div");
-        if (typeof(label) == "string") this.htmlEl.innerText = label;
+        if (typeof (label) == "string") this.htmlEl.innerText = label;
         else if (isDOM(label)) this.htmlEl.appendChild(label);
         this.htmlEl.classList.add("elemental");
         this.htmlEl.classList.add("button");
@@ -219,7 +223,7 @@ class ImageEl extends Element {
 
         let that = this;
         this.preload = new Image;
-        this.preload.onload = function() {
+        this.preload.onload = function () {
             that.image.src = this.src;
 
             if (that.full) {
@@ -240,7 +244,7 @@ class ImageEl extends Element {
         }
     }
 
-    size({width, height, full = true}) {
+    size({ width, height, full = true }) {
         setTimeout(() => {
             if (!width && !height) {
                 width = "100%;";
@@ -251,11 +255,11 @@ class ImageEl extends Element {
             setTimeout(() => {
                 if (width && !height) {
                     this.htmlEl.style.width = width;
-                    this.htmlEl.style.height = Math.floor(this.htmlEl.offsetWidth * (3/4)) + "px";
+                    this.htmlEl.style.height = Math.floor(this.htmlEl.offsetWidth * (3 / 4)) + "px";
                 }
                 if (!width && height) {
                     this.htmlEl.style.height = height;
-                    this.htmlEl.style.width = Math.min(Math.floor(this.htmlEl.offsetHeight * (4/3)) + "px", this.htmlEl.offsetWidth);
+                    this.htmlEl.style.width = Math.min(Math.floor(this.htmlEl.offsetHeight * (4 / 3)) + "px", this.htmlEl.offsetWidth);
                 }
                 if (width && height) {
                     this.htmlEl.style.width = width;
@@ -270,7 +274,7 @@ class ImageEl extends Element {
     }
 
     load(src = "") {
-        setTimeout(() => {this.preload.src = src;}, 5);
+        setTimeout(() => { this.preload.src = src; }, 5);
         return this;
     }
 }
@@ -412,7 +416,7 @@ class SimpleMenu extends Element {
             el.htmlEl.classList.add("selected");
             this.selected = el;
             if (exec) {
-                let inter = setInterval(()=>{
+                let inter = setInterval(() => {
                     if (elementalJSloaded) {
                         el.callback();
                         clearInterval(inter);
@@ -483,14 +487,14 @@ class TabMenu extends HamburgerMenu {
         this.htmlEl.classList.add("closed");
     }
 
-    addHead(el) {}
+    addHead(el) { }
 }
 
 
 
 class SimpleMenuItem extends Button {
-    constructor(icon = "menu.png", label = "", callback = () => {}) {
-        super("", () => {this.menu.select(this, false); callback()});
+    constructor(icon = "menu.png", label = "", callback = () => { }) {
+        super("", () => { this.menu.select(this, false); callback() });
         this.callback = callback;
         this.htmlEl.classList.add("MenuItem");
         this.icon = document.createElement("img");
@@ -499,7 +503,7 @@ class SimpleMenuItem extends Button {
 
         let that = this;
         this.preload = new Image;
-        this.preload.onload = function() {
+        this.preload.onload = function () {
             that.icon.src = this.src;
             that.htmlEl.innerHTML = "";
             that.htmlEl.appendChild(that.icon)
@@ -510,13 +514,13 @@ class SimpleMenuItem extends Button {
 }
 
 class TabMenuItem extends SimpleMenuItem {
-    constructor(icon = "menu.png", callback = () => {}) {
+    constructor(icon = "menu.png", callback = () => { }) {
         super(icon, "", callback);
     }
 }
 
 class HeadMenuItem extends Button {
-    constructor(icon = "menu.png", label = "", callback = () => {}) {
+    constructor(icon = "menu.png", label = "", callback = () => { }) {
         super("", callback);
         this.htmlEl.classList.add("MenuItem");
         this.icon = document.createElement("img");
@@ -525,7 +529,7 @@ class HeadMenuItem extends Button {
 
         let that = this;
         this.preload = new Image;
-        this.preload.onload = function() {
+        this.preload.onload = function () {
             that.icon.src = this.src;
             that.htmlEl.innerHTML = "";
             that.htmlEl.appendChild(that.icon)
@@ -542,6 +546,217 @@ class Input extends Element {
     }
 }
 
+class ColorPicker extends Element {
+    constructor() {
+        super();
+        let rowLayout = new Layout("row");
+        let colLayout = new Layout("column");
+        rowLayout.style.background = "none";
+        colLayout.style.background = "none";
+
+        rowLayout.appendChild(colLayout);
+        this.htmlEl.classList.add("ColorPicker");
+
+        this.huePicker = new HuePicker();
+        this.saturationPicker = new SaturationPicker();
+        this.lightnessPicker = new LightnessPicker();
+
+        this.huePicker.linkedColorPicker = this;
+        this.saturationPicker.linkedColorPicker = this;
+        this.lightnessPicker.linkedColorPicker = this;
+
+        colLayout.appendChild(this.huePicker);
+        colLayout.appendChild(this.saturationPicker);
+        rowLayout.appendChild(this.lightnessPicker);
+
+        this.appendChild(rowLayout);
+        this.onPick_();
+    }
+
+    onPick_() {
+        this.color = { h: this.huePicker.hue, s: this.saturationPicker.saturation, l: this.lightnessPicker.lightness };
+        this.saturationPicker.updateHue(this.color.h);
+        this.lightnessPicker.updateHue(this.color.h);
+        this.onPick(this.color);
+    }
+
+    onPick(color) { }
+}
+
+class HuePicker extends Element {
+    constructor() {
+        super();
+        this.htmlEl.classList.add("HuePicker");
+        this.pointer = new Element();
+        this.pointer.htmlEl.classList.add("pointer");
+        this.appendChild(this.pointer);
+        this.htmlEl.addEventListener("click", this.onClick);
+        this.hue = 343;
+        this.rgb = DEBIAN_RED;
+    }
+
+    onClick(e) {
+        if (!this.htmlEl) return;
+        const rect = this.htmlEl.getBoundingClientRect(); // div's position & size
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const dx = x - cx;
+        const dy = y - cy;
+
+        // angle in degrees
+        let angleDeg = Math.atan2(dy, dx) * (180 / Math.PI);
+        if (angleDeg < 0) angleDeg += 360;
+
+        // rotate the pointer
+        this.pointer.style.transform = `rotate(${angleDeg}deg)`;
+
+        this.rgb = this.getColor(x, y);
+        this.hue = this.rgbToHue(this.rgb[0], this.rgb[1], this.rgb[2]);
+        this.rgb = this.rgbToHex(this.rgb);
+
+        if (this.linkedColorPicker) {
+            this.linkedColorPicker.onPick_();
+        }
+
+        this.onPick(this.hue);
+    }
+
+    onPick(hue) { }
+
+    getColor(x, y) {
+        const size = this.htmlEl.offsetWidth;
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        // this.htmlEl.appendChild(canvas);
+        const ctx = canvas.getContext("2d");
+
+        // Build a conic gradient on canvas
+        const gradient = ctx.createConicGradient(0, size / 2, size / 2);
+        gradient.addColorStop(0 / 5, DEBIAN_RED);
+        gradient.addColorStop(1 / 5, TURMERIC_YELLOW);
+        gradient.addColorStop(2 / 5, AQUA_GREEN);
+        gradient.addColorStop(3 / 5, CURIOS_BLUE);
+        gradient.addColorStop(4 / 5, STRAWBERRY_MAGENTA);
+        gradient.addColorStop(1, DEBIAN_RED);
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, size, size);
+
+        return ctx.getImageData(x, y, 1, 1).data;
+    }
+
+    rgbToHue(r, g, b) {
+        r /= 255; g /= 255; b /= 255;
+
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const delta = max - min;
+
+        let h = 0;
+
+        if (delta === 0) {
+            h = 0; // achromatic (gray)
+        } else if (max === r) {
+            h = ((g - b) / delta) % 6;
+        } else if (max === g) {
+            h = (b - r) / delta + 2;
+        } else {
+            h = (r - g) / delta + 4;
+        }
+
+        h = Math.round(h * 60);
+        if (h < 0) h += 360;
+
+        return h;
+    }
+
+    rgbToHex([r, g, b]) {
+        return (
+            "#" +
+            [r, g, b]
+                .map(x => {
+                    const hex = x.toString(16);
+                    return hex.length === 1 ? "0" + hex : hex; // pad with 0 if needed
+                })
+                .join("")
+        );
+    }
+}
+
+class SaturationPicker extends Element {
+    constructor() {
+        super();
+        this.htmlEl.classList.add("SatPicker");
+        this.pointer = new Element();
+        this.pointer.htmlEl.classList.add("pointer");
+        this.appendChild(this.pointer);
+        this.htmlEl.addEventListener("click", this.onClick);
+        this.saturation = 88;
+    }
+
+    onClick(e) {
+        if (!this.htmlEl) return;
+        const rect = this.htmlEl.getBoundingClientRect(); // div's position & size
+        const x = e.clientX - rect.left;
+        const p = x / rect.width;
+
+        this.saturation = Math.round(p * 100);
+
+        if (this.linkedColorPicker) {
+            this.linkedColorPicker.onPick_();
+        }
+
+        this.pointer.style.left = `${this.saturation}%`;
+        this.linkedColorPicker.onPick_();
+        this.onPick(this.saturation);
+    }
+
+    onPick(saturation) { }
+
+    updateHue(hue) {
+        this.style.background = `linear-gradient(to right, hsl(${hue}, 0%, 50%), hsl(${hue}, 100%, 50%))`;
+    }
+}
+
+class LightnessPicker extends Element {
+    constructor() {
+        super();
+        this.htmlEl.classList.add("LigPicker");
+        this.pointer = new Element();
+        this.pointer.htmlEl.classList.add("pointer");
+        this.appendChild(this.pointer);
+        this.htmlEl.addEventListener("click", this.onClick);
+        this.lightness = 45;
+    }
+
+    onClick(e) {
+        if (!this.htmlEl) return;
+        const rect = this.htmlEl.getBoundingClientRect(); // div's position & size
+        const y = e.clientY - rect.top;
+        const p = y / rect.height;
+
+        this.lightness = Math.round(p * 100);
+
+        if (this.linkedColorPicker) {
+            this.linkedColorPicker.onPick_();
+        }
+
+        this.pointer.style.top = `${this.lightness}%`;
+        this.linkedColorPicker.onPick_();
+        this.onPick(this.lightness);
+    }
+
+    onPick(lightness) { }
+
+    updateHue(hue) {
+        this.style.background = `linear-gradient(to bottom, hsl(${hue}, 100%, 0%), hsl(${hue}, 100%, 50%), hsl(${hue}, 100%, 100%))`;
+    }
+}
+
 class Toast extends Element {
     constructor(message = "") {
         super("Toast");
@@ -555,7 +770,7 @@ class Toast extends Element {
         toastPanel.htmlEl.style.justifyContent = "flex-start";
         let currentHeight = parseFloat(toastPanel.htmlEl.style.height) || 0;
         toastPanel.htmlEl.style.height = (currentHeight + 63) + "px";
-        
+
         setTimeout(() => {
             toastPanel.removeChild(clone);
             toastPanel.htmlEl.style.justifyContent = "flex-end";
@@ -566,26 +781,26 @@ class Toast extends Element {
 }
 
 class Panel extends Layout {
-	constructor(tag) {
-		super("column");
-		this.htmlEl.classList.add("panel");
-		this.htmlEl.classList.add(tag);
-	}
+    constructor(tag) {
+        super("column");
+        this.htmlEl.classList.add("panel");
+        this.htmlEl.classList.add(tag);
+    }
 }
 
 class Canvas extends Element {
-	constructor() {
+    constructor() {
         super();
-		this.canvas = document.createElement("canvas");
-		this.canvas.width = window.innerWidth;
+        this.canvas = document.createElement("canvas");
+        this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-		this.ctx = this.canvas.getContext("2d");
+        this.ctx = this.canvas.getContext("2d");
         this.htmlEl.appendChild(this.canvas);
-		this.init();
-		this.interval = setInterval(() => {this.update()}, 2);
-	}
-	
-	init() {}
-	
-	update() {}
+        this.init();
+        this.interval = setInterval(() => { this.update() }, 2);
+    }
+
+    init() { }
+
+    update() { }
 }

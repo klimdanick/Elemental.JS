@@ -12,13 +12,20 @@
 
             let titles;
             let layout;
-            let menu1, menu2;
+            let colorPicker;
             
             OnElementalLoad = () => {
                 
                 new Layout("column").setAsMain().appendChild(layout = new Layout("row"));
                 
-                layout.appendChild(new Input());
+                // layout.appendChild(new Input());
+
+                colorPicker = new ColorPicker();
+                layout.appendChild(colorPicker);
+                
+                colorPicker.onPick = (color) => {
+                    colorPicker.htmlEl.style.backgroundColor = `hsl(${color.h}, ${color.s}%, ${color.l}%)`;
+                };
             }
         </script>
     </head>
