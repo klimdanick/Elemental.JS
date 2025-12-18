@@ -43,6 +43,8 @@ function AttachStyle(src) {
     style.href = src;
 }
 
+const getEjsAsset = (name) => `https://klimdanick.nl/elementaljs/assets/${name}.png`;
+
 let OnElementalLoad;
 let Interval;
 
@@ -103,8 +105,11 @@ class Element {
     }
 
     appendChild(el) {
+        console.log();
         if (el instanceof Element)
             this.htmlEl.appendChild(el.htmlEl);
+        if (el instanceof Node)
+            this.htmlEl.appendChild(el);
         if (typeof el == "string")
             this.htmlEl.innerHTML += el;
         return this;
@@ -116,11 +121,31 @@ class Element {
         return this;
     }
 
+    removeAllChildren() {
+        while (this.htmlEl.firstChild) {
+            this.htmlEl.removeChild(this.htmlEl.lastChild);
+        }
+    }
+
     onClick(e) { }
 
     onHover(e) { }
 
     onLeave(e) { }
+
+    onScreen() { }
+    offScreen() { }
+
+    observe() {
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+				if (entry.isIntersecting) this.onScreen();
+                else this.offScreen();
+            });
+        });
+
+        obs.observe(this.htmlEl);
+    }
 }
 
 class Layout extends Element {
@@ -132,6 +157,16 @@ class Layout extends Element {
             this.htmlEl.style.flexDirection = direction;
         }
         //this.htmlEl.style.height = "100%";
+    }
+
+    setGrid(options = {}) {
+        this.htmlEl.style.display = "grid";
+        if (options.columns) this.htmlEl.style.gridTemplateColumns = options.columns;
+        if (options.rows) this.htmlEl.style.gridTemplateRows = options.rows;
+        if (options.gap) this.htmlEl.style.gap = options.gap;
+        if (options.align) this.htmlEl.style.alignItems = options.align;
+        if (options.justify) this.htmlEl.style.justifyItems = options.justify;
+        return this;
     }
 
     setAsMain() {
@@ -387,7 +422,7 @@ class SimpleMenu extends Element {
     }
 
     appendChild(el) {
-        if (el instanceof SimpleMenuItem) {
+        if (el instanceof SimpleMenuItem || el instanceof TextInputMenuItem) {
             this.htmlEl.appendChild(el.htmlEl);
             this.items.push(el);
             el.menu = this;
@@ -469,7 +504,7 @@ class HamburgerMenu extends SimpleMenu {
     }
 
     addHead(el) {
-        super.addHead(new HeadMenuItem("/assets/menu.png", el, () => {
+        super.addHead(new HeadMenuItem("https://klimdanick.nl/elementaljs/assets/menu.png", el, () => {
             that.open = !that.open;
             that.htmlEl.classList.toggle("closed")
         }));
@@ -494,7 +529,7 @@ class TabMenu extends HamburgerMenu {
 
 class SimpleMenuItem extends Button {
     constructor(icon = "menu.png", label = "", callback = () => { }) {
-        super("", () => { this.menu.select(this, false); callback() });
+        super("", () => { let cancel = callback(); if (!cancel) this.menu.select(this, false);});
         this.callback = callback;
         this.htmlEl.classList.add("MenuItem");
         this.icon = document.createElement("img");
@@ -511,6 +546,77 @@ class SimpleMenuItem extends Button {
         }
         this.preload.src = icon;
     }
+}
+
+class TextInputMenuItem extends Element {
+    constructor(id, icon = "menu.png", placeholder = "") {
+        super("div");
+        this.htmlEl.classList.add("MenuItem");
+        this.htmlEl.classList.add("elemental");
+        this.htmlEl.classList.add("button");
+        this.htmlEl.classList.add("textInputMenuItem");
+
+        // Create DOM elements
+        this.icon = document.createElement("img");
+        this.inputField = document.createElement("input");
+        this.inputField.type = "search";
+        this.inputField.placeholder = placeholder;
+        this.inputField.id = id;
+
+        // Preload icon image
+        const preload = new Image();
+        preload.onload = () => {
+            this.icon.src = preload.src;
+        };
+        preload.src = icon;
+
+        // Append elements (even before preload)
+        this.htmlEl.appendChild(this.icon);
+        this.htmlEl.appendChild(this.inputField);
+
+        let that = this;
+        this.icon.onclick = () => {
+            this.onsearch(that.inputField.value);
+        }
+    }
+
+    onsearch(value) { }
+}
+
+class InputMenuItem extends Element {
+    constructor(icon = "menu.png", {id, placeholder = "", value = "", type = "text"}) {
+        super("div");
+        this.htmlEl.classList.add("MenuItem");
+        this.htmlEl.classList.add("elemental");
+        this.htmlEl.classList.add("button");
+        this.htmlEl.classList.add("textInputMenuItem");
+
+        // Create DOM elements
+        this.icon = document.createElement("img");
+        this.inputField = document.createElement("input");
+        this.inputField.type = type;
+        this.inputField.placeholder = placeholder;
+        this.inputField.id = id;
+        this.inputField.value = value;
+
+        // Preload icon image
+        const preload = new Image();
+        preload.onload = () => {
+            this.icon.src = preload.src;
+        };
+        preload.src = icon;
+
+        // Append elements (even before preload)
+        this.htmlEl.appendChild(this.icon);
+        this.htmlEl.appendChild(this.inputField);
+
+        let that = this;
+        this.icon.onclick = () => {
+            this.onsearch(that.inputField.value);
+        }
+    }
+
+    onsearch(value) { }
 }
 
 class TabMenuItem extends SimpleMenuItem {
@@ -574,7 +680,10 @@ class ColorPicker extends Element {
     }
 
     onPick_() {
-        this.color = { h: this.huePicker.hue, s: this.saturationPicker.saturation, l: this.lightnessPicker.lightness };
+        let h = this.huePicker.hue;
+        let s = this.saturationPicker.saturation;
+        let l = this.lightnessPicker.lightness;
+        this.color = buildColor(h, s, l);
         this.saturationPicker.updateHue(this.color.h);
         this.lightnessPicker.updateHue(this.color.h);
         this.onPick(this.color);
@@ -582,6 +691,92 @@ class ColorPicker extends Element {
 
     onPick(color) { }
 }
+
+function buildColor(h, s, l) {
+    let rgb = hslToRgb(h, s, l);
+    let hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+    return { h: h, s: s, l: l, r: rgb.r, g: rgb.g, b: rgb.b, hex };
+}
+
+function rgbToHex(r, g, b) {
+    return (
+        "#" +
+        [r, g, b]
+            .map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? "0" + hex : hex; // pad with 0 if needed
+            })
+            .join("")
+    );
+}
+
+function hslToRgb(h, s, l) {
+    // h: hue [0–360], s: saturation [0–100], l: lightness [0–100]
+    s /= 100;
+    l /= 100;
+
+    const c = (1 - Math.abs(2 * l - 1)) * s; // chroma
+    const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+    const m = l - c / 2;
+
+    let r = 0, g = 0, b = 0;
+
+    if (0 <= h && h < 60) {
+        r = c; g = x; b = 0;
+    } else if (60 <= h && h < 120) {
+        r = x; g = c; b = 0;
+    } else if (120 <= h && h < 180) {
+        r = 0; g = c; b = x;
+    } else if (180 <= h && h < 240) {
+        r = 0; g = x; b = c;
+    } else if (240 <= h && h < 300) {
+        r = x; g = 0; b = c;
+    } else if (300 <= h && h < 360) {
+        r = c; g = 0; b = x;
+    }
+
+    r = Math.round((r + m) * 255);
+    g = Math.round((g + m) * 255);
+    b = Math.round((b + m) * 255);
+
+    return { r, g, b };
+}
+
+function rgbToHsl(r, g, b) {
+    // r,g,b in [0–255]
+    r /= 255;
+    g /= 255;
+    b /= 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+
+    let h = 0, s = 0, l = (max + min) / 2;
+
+    if (delta !== 0) {
+        if (max === r) {
+            h = ((g - b) / delta) % 6;
+        } else if (max === g) {
+            h = (b - r) / delta + 2;
+        } else {
+            h = (r - g) / delta + 4;
+        }
+
+        h *= 60;
+        if (h < 0) h += 360;
+
+        s = delta / (1 - Math.abs(2 * l - 1));
+    }
+
+    return {
+        h: Math.round(h),
+        s: Math.round(s * 100),
+        l: Math.round(l * 100)
+    };
+}
+
+
 
 class HuePicker extends Element {
     constructor() {
@@ -613,9 +808,10 @@ class HuePicker extends Element {
         // rotate the pointer
         this.pointer.style.transform = `rotate(${angleDeg}deg)`;
 
-        this.rgb = this.getColor(x, y);
-        this.hue = this.rgbToHue(this.rgb[0], this.rgb[1], this.rgb[2]);
-        this.rgb = this.rgbToHex(this.rgb);
+        let rgb = this.getColor(x, y);
+        let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
+        this.hue = hsl.h;
+        this.color = buildColor(hsl.h, hsl.s, hsl.l);
 
         if (this.linkedColorPicker) {
             this.linkedColorPicker.onPick_();
@@ -647,43 +843,6 @@ class HuePicker extends Element {
         ctx.fillRect(0, 0, size, size);
 
         return ctx.getImageData(x, y, 1, 1).data;
-    }
-
-    rgbToHue(r, g, b) {
-        r /= 255; g /= 255; b /= 255;
-
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
-        const delta = max - min;
-
-        let h = 0;
-
-        if (delta === 0) {
-            h = 0; // achromatic (gray)
-        } else if (max === r) {
-            h = ((g - b) / delta) % 6;
-        } else if (max === g) {
-            h = (b - r) / delta + 2;
-        } else {
-            h = (r - g) / delta + 4;
-        }
-
-        h = Math.round(h * 60);
-        if (h < 0) h += 360;
-
-        return h;
-    }
-
-    rgbToHex([r, g, b]) {
-        return (
-            "#" +
-            [r, g, b]
-                .map(x => {
-                    const hex = x.toString(16);
-                    return hex.length === 1 ? "0" + hex : hex; // pad with 0 if needed
-                })
-                .join("")
-        );
     }
 }
 
@@ -803,4 +962,45 @@ class Canvas extends Element {
     init() { }
 
     update() { }
+}
+
+class Line extends Element {
+    constructor(from, to) {
+        super("line");
+        this.from = from;
+        this.to = to;
+
+        this.style.left = Math.min(from.x, to.x);
+        this.style.top = Math.min(from.y, to.y);
+
+        this.style.width = Math.abs(to.x - from.x);
+        this.style.height = Math.abs(to.y - from.y);
+    }
+}
+
+class BlockLine extends Element {
+    constructor(dir, from, to) {
+        super();
+        this.dir = dir;
+        this.from = from;
+        this.to = to;
+
+        this.lines = [];
+
+        if (dir == "h") {
+            this.lines.push(new Line(from, { x: Math.min(from.x, to.x) + (Math.abs(to.x - from.x) / 2), y: from.y }));
+            this.lines.push(new Line({ x: Math.min(from.x, to.x) + (Math.abs(to.x - from.x) / 2), y: from.y }, { x: Math.min(from.x, to.x) + (Math.abs(to.x - from.x) / 2), y: to.y }));
+            this.lines.push(new Line({ x: Math.min(from.x, to.x) + (Math.abs(to.x - from.x) / 2), y: to.y }, to));
+        }
+
+        if (dir == "v") {
+            this.lines.push(new Line(from, { x: from.x, y: Math.min(from.y, to.y) + (Math.abs(to.y - from.y) / 2) }));
+            this.lines.push(new Line({ x: from.x, y: Math.min(from.y, to.y) + (Math.abs(to.y - from.y) / 2) }, { x: to.x, y: Math.min(from.y, to.y) + (Math.abs(to.y - from.y) / 2) }));
+            this.lines.push(new Line(to, { x: to.x, y: Math.min(from.y, to.y) + (Math.abs(to.y - from.y) / 2) }));
+        }
+
+        for (let i = 0; i < this.lines.length; i++) {
+            this.appendChild(this.lines[i]);
+        }
+    }
 }

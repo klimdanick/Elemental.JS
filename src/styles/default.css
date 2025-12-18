@@ -61,6 +61,12 @@ Layout {
     align-items: center;
 }
 
+Layout.grid {
+    display: grid;
+    justify-items: center;
+    align-items: center;
+}
+
 .fill {
     width: 100%;
     height: 100%;
@@ -210,14 +216,26 @@ Layout {
     display: contents;
 }
 
+.menuItem input {
+    display: block !important;
+    height: 100%;
+    width: 100%;
+    padding: 0.5em;
+    font-size: 100%;
+}
+
+.textInputMenuItem {
+    padding: 1em !important;
+    height: 1em !important;
+    align-items: center;
+}
+
 .menu .menuHead {
     width: 100%;
     margin: 0px;
     background-color: inherit;
     border-radius: 0;
-    padding: 10px;
-    height: 1.5em;
-
+    /* padding: 10px; */
 }
 
 .menuHead {
@@ -291,8 +309,7 @@ input[type="button"]:active {
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     cursor: crosshair;
-    background: conic-gradient(
-            from 90deg, var(--DEBIAN_RED), var(--TURMERIC_YELLOW), var(--AQUA_GREEN), var(--CURIOS_BLUE), var(--STRAWBERRY_MAGENTA), var(--DEBIAN_RED)
+    background: conic-gradient(from 90deg, var(--DEBIAN_RED), var(--TURMERIC_YELLOW), var(--AQUA_GREEN), var(--CURIOS_BLUE), var(--STRAWBERRY_MAGENTA), var(--DEBIAN_RED)
             /* red, yellow, lime, cyan, blue, magenta, red */
         );
     position: relative;
@@ -381,4 +398,51 @@ Toast {
 
 .panel h1 {
     z-index: 1;
+}
+
+line {
+    border: 1px solid var(--text);
+    position: absolute;
+    border-radius: 10px;
+    transition: all;
+    transition-duration: var(--trasitionDuration);
+}
+
+
+
+/* Chrome, Edge, Safari, Opera */
+
+.scroll-container::-webkit-scrollbar {
+    height: 8px;
+    /* for horizontal scrollbars */
+    width: 8px;
+    /* for vertical scrollbars */
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background: var(--level1);
+    /* scrollbar track color */
+    border-radius: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background: #232c33;
+    /* scrollbar handle */
+    border-radius: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+
+/* firefox */
+.scroll-container {
+    overflow: auto;
+
+    scrollbar-width: àuto;
+    /* auto | thin | none */
+    scrollbar-color: #232c33 var(--level1);
+    /* thumb color | track color */
 }

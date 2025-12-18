@@ -15,7 +15,7 @@
             
             OnElementalLoad = () => {
                 
-                new Layout("column").setAsMain().appendChild(layout2 = new Layout("column")).appendChild(layout = new Layout("row"));
+                new Layout("row").setAsMain().appendChild(new Layout("column").appendChild("<h1>Menu example!</h1>").appendChild(layout2 = new Layout("column")).appendChild(layout = new Layout("row")));
                 menu1 = new SimpleMenu();
                 menu2 = new DropDownMenu();
                 menu3 = new HamburgerMenu();
@@ -103,11 +103,33 @@
                 // menu5.addHead(`<h2>Row</h2>`);
                 menu7.appendChildren(menuItems7);
                 menu7.select(menuItems7[0]);
+
+                mainLayout.style.flexDirection = "row-reverse";
             }
         </script>
     </head>
 
     <body>
-        <h1>Menu example!</h1>
+        <pre><code class="language-javascript">
+            menu1 = new SimpleMenu();
+            menu2 = new DropDownMenu();
+            menu3 = new HamburgerMenu();
+            menu4 = new TabMenu();
+            menu5 = new SimpleMenu("row");
+            menu6 = new HamburgerMenu("row");
+            menu7 = new TabMenu("row");
+
+            let menuItems = [
+                    new SimpleMenuItem("/assets/home.png", "Home", () => {}),
+                    ...
+                    ...
+            ]
+
+            menu1.addHead(`<h2>Simple</h2>`);
+            menu1.appendChildren(menuItems);
+            menu1.select(menuItems[0]);
+        </code></pre>
+
+        <div style="width: 20%;"></div>
     </body>
 </html>
