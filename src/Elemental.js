@@ -32,16 +32,20 @@ function AttachStyle(src) {
     style.href = src;
 }
 
-const getEjsAsset = (name) => `https://klimdanick.nl/elementaljs/assets/${name}.png`;
+const defaultLibURL = ""
 
-let OnElementalLoad;
-let Interval;
+const getEjsAsset = (name, libURL = defaultLibURL) => `${defaultLibURL}/assets/${name}.png`;
+
+let OnElementalLoad = () => { };
+
+let body;
 
 AttachScript("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js");
 AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css");
-AttachStyle("https://klimdanick.nl/elementaljs/styles/default.css");
+AttachStyle(`${defaultLibURL}/src/Elemental.css`);
 
-window.onload = () => {
+
+window.addEventListener("load", (event) => {
     CINDER_BLACK = getComputedStyle(root).getPropertyValue('--CINDER_BLACK');
     BLACK_PEARL = getComputedStyle(root).getPropertyValue('--BLACK_PEARL');
     DEBIAN_RED = getComputedStyle(root).getPropertyValue('--DEBIAN_RED');
@@ -53,6 +57,98 @@ window.onload = () => {
     level0 = getComputedStyle(root).getPropertyValue('--level0');
     level1 = getComputedStyle(root).getPropertyValue('--level1');
 
+    body = new BodyElement();
+
     OnElementalLoad();
+    reloadElemental();
+});
+
+const reloadElemental = () => {
     hljs.highlightAll();
+}
+
+class Element {
+    constructor({ tag = "Element", id = "", classes = [], attributes = {}, listeners = {} }) {
+        this.tag = tag;
+        this.id = id;
+        this.classes = classes;
+        this.attributes = attributes;
+        this.listeners = listeners;
+        this.children = [];
+
+    }
+
+    append(...elements) {
+        elements.flat().forEach(el => this.children.push(el));
+        body.render();
+        return this;
+    }
+
+    remove(...elements) {
+        const toRemove = new Set(elements.flat());
+
+        this.children = this.children.filter(child => !toRemove.has(child));
+
+        body.render();
+        return this;
+    }
+
+    clear() {
+        this.children = [];
+        body.render();
+        return this;
+    }
+
+    render() {
+        this.html = document.createElement(this.tag);
+
+        this.html.id = this.id;
+
+        // Classes
+        if (Array.isArray(this.classes)) {
+            this.html.classList.add(...this.classes);
+        }
+
+        // Attributes
+        for (const [key, value] of Object.entries(this.attributes)) {
+            this.html.setAttribute(key, value);
+        }
+
+        // Event listeners
+        for (const [event, handler] of Object.entries(this.listeners)) {
+            this.html.addEventListener(event, handler);
+        }
+
+        this.renderChildren();
+
+        return this;
+    }
+
+    renderChildren() {
+        this.children.flat().forEach(el => {
+            if (el instanceof Element) {
+                el.render();
+                this.html.appendChild(el.html);
+            } else if (el instanceof Node) {
+                this.html.appendChild(el);
+            } else if (typeof el === "string" || typeof el === "number") {
+                this.html.appendChild(document.createTextNode(el));
+            }
+        });
+
+        return this;
+    }
+}
+
+class BodyElement extends Element {
+    constructor() {
+        super("body");
+        this.html = document.body
+    }
+
+    render() {
+        this.html.innerHTML = "";
+
+        this.renderChildren();
+    }
 }

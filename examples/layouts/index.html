@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <script src="../../src/Elemental.js"></script>
+    </head>
+    <script>
+        let el1, el2;
+        
+        OnElementalLoad = () => {
+            el1 = new Element({classes:["test"]})
+            body.append(el1);
+            el2 = new Element({classes:["testtest"]})
+            el1.append(el2);
+        }
+    </script>
+    <body></body>
+</html>

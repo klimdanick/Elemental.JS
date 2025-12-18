@@ -14,20 +14,20 @@
 **Goal:** Minimal but usable framework.
 
 ### Core API
-- [ ] Element creation
+- [x] Element creation
   - Attributes
   - Classes
   - Event listeners (`onClick`, etc.)
-- [ ] Text node handling
-- [ ] Nested children support
+- [x] Text node handling
+- [x] Nested children support
 
 ### Mounting
-- [ ] Basic mounting to parent elements
-- [ ] Optional `clear()` helper
+- [x] Basic mounting to parent elements
+- [x] Optional `clear()` helper
 
 ### Error Handling
 - [ ] Helpful runtime errors for invalid tags or props
-- [ ] Safe handling of `null` / `undefined` children
+- [x] Safe handling of `null` / `undefined` children
 
 ---
 
