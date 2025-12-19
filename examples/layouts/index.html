@@ -1,16 +1,50 @@
 <html>
-    <head>
-        <script src="../../src/Elemental.js"></script>
-    </head>
-    <script>
-        let el1, el2;
-        
-        OnElementalLoad = () => {
-            el1 = new Element({classes:["test"]})
-            body.append(el1);
-            el2 = new Element({classes:["testtest"]})
-            el1.append(el2);
+
+<head>
+    <script src="../../src/Elemental.js"></script>
+</head>
+<script>
+
+    let c1, c2;
+    OnElementalLoad = () => {
+        let app =
+            Layout.column({ id: "mainLayout" })
+                .row()
+                    .grid({id:"g1"}, g => c1 = g).end()
+                    .grid({id:"g2"}, g => c2 = g).end()
+                .root();
+
+        let l1 = [], l2 = [];
+        for (let i = 0; i < 4; i++) {
+            l1.push(Layout.container());
         }
-    </script>
-    <body></body>
+        for (let i = 0; i < 5; i++) {
+            l2.push(Layout.container());
+        }
+        c1.append(...l1)
+        c2.append(...l2)
+
+
+        body.append(app);
+    }
+</script>
+<style>
+    .container {
+        height: 10em;
+        width: 10em;
+        background-color: var(--DARK_JUNGLE);
+        border-radius: 10px;
+    }
+
+    #mainLayout {
+        justify-content: center;
+    }
+
+    #g1, #g2 {
+        grid-template-columns: auto auto auto;
+    }
+</style>
+
+<body></body>
+
 </html>

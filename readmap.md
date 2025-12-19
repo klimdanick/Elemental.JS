@@ -43,10 +43,10 @@
 - [ ] CSS variables for theming
 
 ### Base Classes
-- [ ] `.container`
-- [ ] `.stack` (vertical layout)
-- [ ] `.row`
-- [ ] `.grid`
+- [x] `.container`
+- [x] `.column` (vertical layout)
+- [x] `.row`
+- [x] `.grid`
 
 ---
 

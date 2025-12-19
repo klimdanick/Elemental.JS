@@ -75,11 +75,16 @@ class Element {
         this.attributes = attributes;
         this.listeners = listeners;
         this.children = [];
-
+        this.parent = null;
     }
 
     append(...elements) {
-        elements.flat().forEach(el => this.children.push(el));
+        elements.flat().forEach(el => {
+            if (el instanceof Element) {
+                el.parent = this;
+            }
+            this.children.push(el)
+        });
         body.render();
         return this;
     }
@@ -138,6 +143,14 @@ class Element {
 
         return this;
     }
+
+    end() {
+        return this.parent ?? this;
+    }
+
+    root() {
+        return this.parent ? this.parent.root() : this;
+    }
 }
 
 class BodyElement extends Element {
@@ -152,3 +165,74 @@ class BodyElement extends Element {
         this.renderChildren();
     }
 }
+
+class Layout extends Element {
+
+    constructor({ tag = "Layout", id = "", classes = [], attributes = {}, listeners = {} } = {}) {
+        super({ tag, id, classes, attributes, listeners });
+    }
+
+    /* ---------- Root creators ---------- */
+
+    static container(options = {}) {
+        return new Layout({
+            ...options,
+            classes: ["container", ...(options.classes || [])]
+        });
+    }
+
+    static row(options = {}) {
+        return new Layout({
+            ...options,
+            classes: ["row", ...(options.classes || [])]
+        });
+    }
+
+    static column(options = {}) {
+        return new Layout({
+            ...options,
+            classes: ["column", ...(options.classes || [])]
+        });
+    }
+
+    static grid(options = {}) {
+        return new Layout({
+            ...options,
+            classes: ["grid", ...(options.classes || [])]
+        });
+    }
+
+    /* ---------- Hybrid nested helpers ---------- */
+
+    container(options = {}, fn) {
+        const el = Layout.container(options);
+        this.append(el);
+        if (fn) fn(el);
+        return el;
+    }
+
+    row(options = {}, fn) {
+        const el = Layout.row(options);
+        this.append(el);
+        if (fn) fn(el);
+        return el;
+    }
+
+    column(options = {}, fn) {
+        const el = Layout.column(options);
+        this.append(el);
+        if (fn) fn(el);
+        return el;
+    }
+
+    grid(options = {}, fn) {
+        const el = Layout.grid(options);
+        this.append(el);
+        if (fn) fn(el);
+        return el;
+    }
+}
+
+
+
+
