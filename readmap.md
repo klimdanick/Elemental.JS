@@ -36,8 +36,8 @@
 
 ### Default CSS
 - [x] Reset / normalize
-- [ ] Typography defaults
-- [ ] Spacing system
+- [x] Typography defaults
+- [x] Spacing system
 - [ ] Color palette
 - [ ] Border radius & shadows
 - [ ] CSS variables for theming

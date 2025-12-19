@@ -22,7 +22,7 @@ class CodeBlock extends Element {
       });
 
       lastCodeEl = this
-      console.log(code);
+      
       this.codeEl.append(code);
       this.append(this.codeEl);
     }
