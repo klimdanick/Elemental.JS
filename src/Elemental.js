@@ -40,8 +40,6 @@ let OnElementalLoad = () => { };
 
 let body;
 
-AttachScript("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js");
-AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css");
 AttachStyle(`${defaultLibURL}/src/Elemental.css`);
 
 
@@ -63,9 +61,7 @@ window.addEventListener("load", (event) => {
     reloadElemental();
 });
 
-const reloadElemental = () => {
-    hljs.highlightAll();
-}
+const reloadElemental = () => {}
 
 class Element {
     constructor({ tag = "Element", id = "", classes = [], attributes = {}, listeners = {} }) {

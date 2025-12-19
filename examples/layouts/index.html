@@ -2,8 +2,49 @@
 
 <head>
     <script src="../../src/Elemental.js"></script>
+    <script src="../../src/addons/codeBlock/codeblock.js"></script>
 </head>
 <script>
+
+    let html = `<script src="../../src/Elemental.js"><\/script>`
+    let js = `OnElementalLoad = () => {
+    let g1, g2;
+    let app =
+    Layout.column({ id: "mainLayout" })
+        .grid({classes:["g"]}, g => g1 = g).end()
+        .row({classes:["g"]}, g => g2 = g).end()
+    .root();
+
+    let l1 = [], l2 = [];
+    for (let i = 0; i < 4; i++) {
+        l1.push(Layout.container());
+    }
+    for (let i = 0; i < 4; i++) {
+        l2.push(Layout.container().grid({classes:["small_grid"]}).append(...l1));
+    }
+    g1.append(...l2)
+    g2.append(...l2)
+    body.append(app);
+}`
+
+    let css = `.container {
+    height: 100%;
+    width: 100%;
+    background-color: var(--CINDER_BLACK);
+    border-radius: 10px;
+}
+
+.grid {
+    grid-template-columns: auto auto;
+}
+
+.g {
+    background-color: var(--BLACK_PEARL);
+}
+
+.small_grid .container {
+    background-color: var(--CURIOS_BLUE);
+}`
 
     let g1, g2;
     let app, visual, codePreview;
@@ -15,6 +56,11 @@
                     .row({classes:["g"]}, g => g2 = g).end()
                 .end()
                 .container({ id: "codePreview"}, c => codePreview = c)
+                    .append(
+                        new CodeBlock({code: html, language:"html"}),
+                        new CodeBlock({code: js, language:"js"}),
+                        new CodeBlock({code: css, language:"css"})
+                    )
             .root();
 
         let l1 = [], l2 = [];
@@ -63,64 +109,15 @@
 
     #codePreview {
         background: none;
+        overflow: auto;
+    }
+
+    #codePreview pre {
+        width: 90%;
+        margin: 0;
     }
 </style>
 
-</html>
-
-
-<!--
-
-<html>
-
-<head>
-    <script src="../../src/Elemental.js"></script>
-</head>
-<script>
-
-    let g1, g2;
-    OnElementalLoad = () => {
-        let app =
-            Layout.column({ id: "mainLayout" })
-                .grid({classes:["g"]}, g => g1 = g).end()
-                .row({classes:["g"]}, g => g2 = g).end()
-            .root();
-
-        let l1 = [], l2 = [];
-        for (let i = 0; i < 4; i++) {
-            l1.push(Layout.container());
-        }
-        for (let i = 0; i < 4; i++) {
-            l2.push(Layout.container().grid({classes:["small_grid"]}).append(...l1));
-        }
-        g1.append(...l2)
-        g2.append(...l2)
-
-
-        body.append(app);
-    }
-</script>
-<style>
-    .container {
-        height: 100%;
-        width: 100%;
-        background-color: var(--CINDER_BLACK);
-        border-radius: 10px;
-    }
-
-    .grid {
-        grid-template-columns: auto auto;
-    }
-
-    .g {
-        background-color: var(--BLACK_PEARL);
-    }
-
-    .small_grid .container {
-        background-color: var(--CURIOS_BLUE);
-    }
-</style>
+<body></body>
 
 </html>
-
--->
