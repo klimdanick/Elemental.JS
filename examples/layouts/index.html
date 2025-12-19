@@ -5,24 +5,96 @@
 </head>
 <script>
 
-    let c1, c2;
+    let g1, g2;
+    let app, visual, codePreview;
     OnElementalLoad = () => {
-        let app =
-            Layout.column({ id: "mainLayout" })
-                .row()
-                    .grid({id:"g1"}, g => c1 = g).end()
-                    .grid({id:"g2"}, g => c2 = g).end()
-                .root();
+        app =
+            Layout.row({ id: "mainLayout" })
+                .column({ id: "visual"}, c => visual = c)
+                    .grid({classes:["g"]}, g => g1 = g).end()
+                    .row({classes:["g"]}, g => g2 = g).end()
+                .end()
+                .container({ id: "codePreview"}, c => codePreview = c)
+            .root();
 
         let l1 = [], l2 = [];
         for (let i = 0; i < 4; i++) {
             l1.push(Layout.container());
         }
-        for (let i = 0; i < 5; i++) {
-            l2.push(Layout.container());
+        for (let i = 0; i < 4; i++) {
+            l2.push(Layout.container().grid({classes:["small_grid"]}).append(...l1));
         }
-        c1.append(...l1)
-        c2.append(...l2)
+        g1.append(...l2)
+        g2.append(...l2)
+
+
+        body.append(app);
+    }
+</script>
+<style>
+
+    #mainLayout {
+        background-color: var(--BLACK_PEARL);
+    }
+
+    .container {
+        height: 100%;
+        width: 100%;
+        background-color: var(--CINDER_BLACK);
+        border-radius: 10px;
+    }
+
+    .grid {
+        grid-template-columns: auto auto;
+    }
+
+    .g {
+        background-color: var(--BLACK_PEARL);
+    }
+
+    .small_grid .container {
+        background-color: var(--CURIOS_BLUE);
+    }
+
+    #codePreview, #visual {
+        width: 100%;
+        height: 100%;
+    }
+
+    #codePreview {
+        background: none;
+    }
+</style>
+
+</html>
+
+
+<!--
+
+<html>
+
+<head>
+    <script src="../../src/Elemental.js"></script>
+</head>
+<script>
+
+    let g1, g2;
+    OnElementalLoad = () => {
+        let app =
+            Layout.column({ id: "mainLayout" })
+                .grid({classes:["g"]}, g => g1 = g).end()
+                .row({classes:["g"]}, g => g2 = g).end()
+            .root();
+
+        let l1 = [], l2 = [];
+        for (let i = 0; i < 4; i++) {
+            l1.push(Layout.container());
+        }
+        for (let i = 0; i < 4; i++) {
+            l2.push(Layout.container().grid({classes:["small_grid"]}).append(...l1));
+        }
+        g1.append(...l2)
+        g2.append(...l2)
 
 
         body.append(app);
@@ -30,21 +102,25 @@
 </script>
 <style>
     .container {
-        height: 10em;
-        width: 10em;
-        background-color: var(--BLACK_PEARL);
+        height: 100%;
+        width: 100%;
+        background-color: var(--CINDER_BLACK);
         border-radius: 10px;
     }
 
-    #mainLayout {
-        justify-content: center;
+    .grid {
+        grid-template-columns: auto auto;
     }
 
-    #g1, #g2 {
-        grid-template-columns: auto auto auto;
+    .g {
+        background-color: var(--BLACK_PEARL);
+    }
+
+    .small_grid .container {
+        background-color: var(--CURIOS_BLUE);
     }
 </style>
 
-<body></body>
-
 </html>
+
+-->
