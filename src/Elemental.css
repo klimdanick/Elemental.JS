@@ -12,11 +12,41 @@
     --TEXT: #FFF;
 }
 
-html, body {
+/* NORMALIZATION */
+
+html,
+body {
     margin: 0;
     padding: 0;
     color: var(--TEXT);
 }
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    line-height: 1.5;
+}
+
+img,
+svg {
+    max-width: 100%;
+    display: block;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+/* element styles */
+
 
 Layout {
     background-color: var(--CINDER_BLACK);

@@ -35,7 +35,7 @@
 **Goal:** Clean default UI without locking users in.
 
 ### Default CSS
-- [ ] Reset / normalize
+- [x] Reset / normalize
 - [ ] Typography defaults
 - [ ] Spacing system
 - [ ] Color palette
