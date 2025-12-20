@@ -1,0 +1,84 @@
+<html>
+
+<head>
+    <script src="../../src/Elemental.js"></script>
+</head>
+<script>
+
+    let app;
+    let form;
+    OnElementalLoad = () => {
+        app = Layout.column({ id: "mainLayout", classes: ["level0"] });
+
+        form = Layout.column({ tag: "form", id: "form1", classes: ["level2"] })
+            .append(new Header({ level: 1 })
+                .append(
+                    new Icon({src: getEjsAsset("home")}),
+                    "Title"
+                )
+            )
+            .append(
+                new FormGroup({
+                    icon: new Icon({src: getEjsAsset("messages"),}),
+                    label: "Email",
+                    input: new EmailInput({
+                        id: "email",
+                        placeholder: "email"
+                    }),
+                }),
+                new FormGroup({
+                    icon: new Icon({src: getEjsAsset("save"),}),
+                    label: "Password",
+                    input: new PasswordInput({
+                        id: "password",
+                        placeholder: "password"
+                    })
+                }),
+                new FormGroup({
+                    icon: new Icon({src: getEjsAsset("grid"),}),
+                    label: "Checkbox",
+                    input: new Checkbox({
+                        id: "toggle1"
+                    })
+                }),
+                new FormGroup({
+                    icon: new Icon({src: getEjsAsset("line"),}),
+                    label: "Line",
+                    input: new Select({
+                        id: "select1",
+                        options: [{value: 0, label: "Straight"}, {value: 0, label: "Smooth"}, {value: 0, label: "Spline"}, {value: 0, label: "Arrow"}]
+                    })
+                }),
+                new FormGroup({
+                    icon: new Icon({src: getEjsAsset("notifications"),}),
+                    label: "Number input",
+                    input: new NumberInput({
+                        id: "number1",
+                        
+                    })
+                }),
+                new FormGroup({
+                    icon: new Icon({src: getEjsAsset("copy"),}),
+                    label: "Toggle switch",
+                    input: new ToggleSwitch({
+                        id: "toggle2"
+                    })
+                })
+            );
+
+        app.append(form);
+
+        body.append(app);
+    }
+</script>
+<style>
+    #mainLayout {}
+
+    #form1 {
+        align-items: flex-start;
+    }
+</style>
+
+<body></body>
+
+</html>

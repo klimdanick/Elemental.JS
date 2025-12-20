@@ -13,7 +13,12 @@
     --font-base: 'D-DIN-Bold', Arial, Verdana, sans-serif;
     --primary: var(--CURIOS_BLUE);
     --base-padding: 10px;
+    --input-padding: 0.25em;
     --base-border-radius: 10px;
+    --level-1: #060c12;
+    --level0: var(--CINDER_BLACK);
+    --level1: #09121b;
+    --level2: var(--BLACK_PEARL);
 }
 
 /* NORMALIZATION */
@@ -52,6 +57,16 @@ select {
     font: inherit;
 }
 
+h1,
+h2,
+h3,
+p,
+a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 h1 {
     font-size: 2rem;
 }
@@ -73,11 +88,26 @@ a {
     text-decoration: none;
 }
 
+.level-1 {
+    background-color: var(--level-1);
+}
+
+.level0 {
+    background-color: var(--level0);
+}
+
+.level1 {
+    background-color: var(--level1);
+}
+
+.level2 {
+    background-color: var(--level2);
+}
+
 /* element styles */
 
 
-Layout {
-    background-color: var(--CINDER_BLACK);
+.layout {
     display: flex;
     align-content: space-evenly;
     justify-content: space-evenly;
@@ -108,3 +138,143 @@ Layout {
 .grid {
     display: grid;
 }
+
+.image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.icon {
+    max-width: 1em;
+    max-height: 1em;
+    aspect-ratio: 1 / 1;
+    display: inline-block;
+}
+
+.input,
+.textarea,
+.select {
+    width: 100%;
+    max-width: 8em;
+    padding: var(--input-padding);
+    border: none;
+    border-radius: var(--base-border-radius);
+    background-color: var(--level0);
+    color: var(--TEXT);
+    font: inherit;
+}
+
+.numberInput {
+    width: 4em;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-group {
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.form-group.column {
+    align-items: flex-start;
+}
+
+.form-group .formEl {
+    margin-left: auto;
+}
+
+.form-group h1,
+.form-group h2,
+.form-group h3 {
+    margin: 0;
+}
+
+label {
+    font-size: 0.9rem;
+    color: var(--color-muted);
+}
+
+.form-help {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+}
+
+.form-error {
+    font-size: 0.8rem;
+    color: red;
+}
+
+.toggle-button {
+    padding: var(--base-padding) var(--input-padding);
+    border-radius: var(--base-border-radius);
+    border: 1px solid var(--primary);
+    background: var(--level0);
+    cursor: pointer;
+    color: var(--TEXT);
+    min-width: 1em;
+    min-height: 1em;
+}
+
+.toggle-button.is-on {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+  
+  /* Hide the real checkbox */
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The track */
+  .toggle-switch .slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: var(--level-1);
+    border-radius: 999px;
+    transition: background-color 0.2s;
+  }
+  
+  /* The knob */
+  .toggle-switch .slider::before {
+    content: "";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    top: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  
+  /* Checked state */
+  .toggle-switch input:checked + .slider {
+    background-color: var(--primary);
+  }
+  
+  .toggle-switch input:checked + .slider::before {
+    transform: translateX(20px);
+  }
+  
+  /* Focus (keyboard accessibility) */
+  .toggle-switch input:focus-visible + .slider {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  
