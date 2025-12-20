@@ -300,6 +300,28 @@ class Header extends Element {
     }
 }
 
+class Form extends Layout {
+    constructor({ onSubmit = null, ...opts } = {}) {
+        super({ tag: "form", ...opts });
+
+        this.onSubmit = onSubmit;
+    }
+
+    render() {
+        super.render();
+        if (this.onSubmit) {
+            this.html.addEventListener("submit", (e) => {
+                e.preventDefault();
+                this.onSubmit(new FormData(this.html), e);
+            });
+        }
+    }
+
+    data() {
+        return Object.fromEntries(new FormData(this.html));
+    }
+}
+
 class Input extends Element {
     constructor({
         type = "text",
@@ -369,6 +391,101 @@ class NumberInput extends Input {
     }
 }
 
+class Slider extends Input {
+    constructor({
+        name = "",
+        value = 0,
+        min = 0,
+        max = 100,
+        step = 1,
+        id = "",
+        classes = [],
+        attributes = {},
+        listeners = {}
+    } = {}) {
+        super({
+            type: "range",
+            name,
+            value,
+            id,
+            classes: ["slider", ...classes],
+            attributes: {
+                min,
+                max,
+                step,
+                ...attributes
+            },
+            listeners
+        });
+    }
+}
+
+function bindNumberAndSlider(numberInput, slider) {
+    // Slider → Number
+    slider.html.addEventListener("input", () => {
+        numberInput.value(slider.value());
+    });
+
+    // Number → Slider
+    numberInput.html.addEventListener("input", () => {
+        let v = Number(numberInput.value());
+
+        // Clamp value
+        const min = Number(slider.html.min);
+        const max = Number(slider.html.max);
+        v = Math.min(max, Math.max(min, v));
+
+        slider.value(v);
+    });
+}
+
+class NumberSlider extends Layout {
+    constructor({
+        value = 0,
+        min = 0,
+        max = 100,
+        step = 1,
+        dir = "row",
+        id = "",
+        classes = [],
+        name = ""
+    } = {}) {
+        super({
+            classes: ["number-slider", "formEl", dir, ...classes]
+        });
+
+        this.number = new NumberInput({
+            name,
+            value,
+            min,
+            max
+        });
+
+        this.slider = new Slider({
+            value,
+            min,
+            max,
+            step
+        });
+
+        this.append(this.slider, this.number);
+    }
+
+    render() {
+        super.render();
+        bindNumberAndSlider(this.number, this.slider);
+    }
+
+    value(val) {
+        if (val === undefined) return this.number.value();
+        this.number.value(val);
+        this.slider.value(val);
+        return this;
+    }
+}
+
+
+
 class TextArea extends Element {
     constructor({
         name = "",
@@ -420,7 +537,7 @@ class Checkbox extends Element {
         });
     }
 
-    checked(val) {
+    value(val) {
         if (val === undefined) return this.html.checked;
         this.html.checked = val;
         return this;
@@ -448,7 +565,7 @@ class Select extends Element {
         });
 
         this.options = options;
-        this.value = value;
+        // this.value_ = value;
     }
 
     render() {
@@ -535,7 +652,8 @@ class ToggleSwitch extends Element {
         id = "",
         classes = [],
         attributes = {},
-        onChange = null
+        onChange = null,
+        name = ""
     } = {}) {
         super({
             tag: "label",
@@ -546,6 +664,7 @@ class ToggleSwitch extends Element {
             tag: "input",
             attributes: {
                 type: "checkbox",
+                name,
                 id,
                 ...attributes
             }
@@ -609,6 +728,7 @@ class FormGroup extends Layout {
         }
 
         if (input) this.append(input);
+        this.input = input;
 
         if (help) {
             this.append(
@@ -621,5 +741,73 @@ class FormGroup extends Layout {
                 new Element({ tag: "div", classes: ["form-error"] }).append(error)
             );
         }
+    }
+
+    value(val) {
+        return this.input.value();
+    }
+}
+
+class Button extends Element {
+    constructor({
+        type = "button",
+        id = "",
+        classes = [],
+        attributes = {},
+        listeners = {},
+        onClick = (e) => { }
+    } = {}) {
+        super({
+            tag: "button",
+            id,
+            classes: ["button", "formEl", ...classes],
+            attributes: {
+                type,
+                ...attributes
+            },
+            listeners
+        });
+
+        this.disabled = false;
+
+        this.onClick = onClick;
+    }
+
+    disable(val = true) {
+        this.disabled = val;
+        return this;
+    }
+
+    render() {
+        super.render();
+        this.html.disabled = this.disabled;
+        this.html.addEventListener("click", this.onClick);
+    }
+
+    setLoading(isLoading = true) {
+        this.disable(isLoading);
+        if (!this.classes.includes("loading")) this.classes.push("loading");
+        else {
+            const index = this.classes.indexOf("loading");
+            if (index > -1) { // only splice array when item is found
+                this.classes.splice(index, 1); // 2nd parameter means remove one item only
+            }
+        }
+        this.html?.classList.toggle("loading", isLoading);
+        return this;
+    }
+
+    bindShortcut(key = "Enter") {
+        document.addEventListener("keydown", e => {
+            if (e.key === key) this.html.click();
+        });
+        return this;
+    }
+
+}
+
+class SubmitButton extends Button {
+    constructor(options = {}) {
+        super({ ...options, type: "submit", classes: ["submit", ...(options.classes || [])] });
     }
 }

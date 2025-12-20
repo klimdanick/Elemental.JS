@@ -39,8 +39,8 @@
 - [x] Typography defaults
 - [x] Spacing system
 - [ ] Color palette
-- [ ] Border radius & shadows
-- [ ] CSS variables for theming
+- [x] Border radius & shadows
+- [x] CSS variables for theming
 
 ### Base Classes
 - [x] `.container`
@@ -54,7 +54,7 @@
 **Goal:** Cover common UI needs.
 
 ### Basic Components
-- [ ] Button
+- [x] Button
 - [ ] Card
 - [ ] Badge
 - [ ] Divider
@@ -65,10 +65,12 @@
 - [ ] Sidebar
 
 ### Forms
-- [ ] Text input
-- [ ] Checkbox
-- [ ] Select
-- [ ] Form group
+- [x] Text input
+- [x] Checkbox
+- [x] Select
+- [x] Slider
+- [x] Form group
+- [x] Forms
 
 ---
 

@@ -8,63 +8,87 @@
     let app;
     let form;
     OnElementalLoad = () => {
-        app = Layout.column({ id: "mainLayout", classes: ["level0"] });
+        app = Layout.row({ id: "mainLayout", classes: ["level0"] });
 
-        form = Layout.column({ tag: "form", id: "form1", classes: ["level2"] })
+        form = new Form({
+            id: "form1", classes: ["level2"], onSubmit: (data) => {
+                console.log(JSON.stringify(Object.fromEntries(data)));
+            }
+        })
             .append(new Header({ level: 1 })
                 .append(
-                    new Icon({src: getEjsAsset("home")}),
-                    "Title"
+                    new Icon({ src: getEjsAsset("home") }),
+                    "Form example"
                 )
             )
             .append(
                 new FormGroup({
-                    icon: new Icon({src: getEjsAsset("messages"),}),
+                    icon: new Icon({ src: getEjsAsset("messages"), }),
                     label: "Email",
                     input: new EmailInput({
                         id: "email",
+                        name: "email",
                         placeholder: "email"
                     }),
                 }),
                 new FormGroup({
-                    icon: new Icon({src: getEjsAsset("save"),}),
+                    icon: new Icon({ src: getEjsAsset("save"), }),
                     label: "Password",
                     input: new PasswordInput({
                         id: "password",
+                        name: "password",
                         placeholder: "password"
                     })
                 }),
                 new FormGroup({
-                    icon: new Icon({src: getEjsAsset("grid"),}),
+                    icon: new Icon({ src: getEjsAsset("grid"), }),
                     label: "Checkbox",
                     input: new Checkbox({
-                        id: "toggle1"
+                        id: "toggle1",
+                        name: "toggle1",
+                        checked: true
                     })
                 }),
                 new FormGroup({
-                    icon: new Icon({src: getEjsAsset("line"),}),
-                    label: "Line",
+                    icon: new Icon({ src: getEjsAsset("line"), }),
+                    label: "Dropdown",
                     input: new Select({
                         id: "select1",
-                        options: [{value: 0, label: "Straight"}, {value: 0, label: "Smooth"}, {value: 0, label: "Spline"}, {value: 0, label: "Arrow"}]
+                        name: "select1",
+                        options: [{ value: 0, label: "Straight" }, { value: 1, label: "Smooth" }, { value: 2, label: "Spline" }, { value: 3, label: "Arrow" }]
                     })
                 }),
                 new FormGroup({
-                    icon: new Icon({src: getEjsAsset("notifications"),}),
+                    icon: new Icon({ src: getEjsAsset("notifications"), }),
                     label: "Number input",
                     input: new NumberInput({
                         id: "number1",
-                        
+                        name: "number1",
                     })
                 }),
                 new FormGroup({
-                    icon: new Icon({src: getEjsAsset("copy"),}),
+                    icon: new Icon({ src: getEjsAsset("copy"), }),
                     label: "Toggle switch",
                     input: new ToggleSwitch({
-                        id: "toggle2"
+                        id: "toggle2",
+                        name: "toggle2",
+                        checked: false
                     })
-                })
-            );
+                }),
+                new FormGroup({
+                    icon: new Icon({ src: getEjsAsset("search"), }),
+                    label: "Slider",
+                    input: new NumberSlider({
+                        min: 0,
+                        max: 10,
+                        value: 5,
+                        name: "slider"
+                    })
+                }),
+            ).row({attributes: {style: "width: 100%; justify-content: space-between;"}}).append(
+                new Button({ type: "reset", classes: ["danger"] }).append(new Icon({ src: getEjsAsset("rotate_left"), }), "Reset"),
+                new Button({ type: "submit", classes: ["primary"] }).append(new Icon({ src: getEjsAsset("save"), }), "Save")
+            ).root();
 
         app.append(form);
 
@@ -72,11 +96,6 @@
     }
 </script>
 <style>
-    #mainLayout {}
-
-    #form1 {
-        align-items: flex-start;
-    }
 </style>
 
 <body></body>
