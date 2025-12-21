@@ -137,9 +137,9 @@
     --border-color: #d3dae3;
     --border-color-soft: #e4e9f0;
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.48);
 
     --icon-filter: invert(1);
 }

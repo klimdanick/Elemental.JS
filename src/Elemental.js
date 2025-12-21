@@ -13,10 +13,13 @@ let STRAWBERRY_MAGENTA;
 let level0;
 let level1;
 
+const stringToHTML = string => new DOMParser().parseFromString(string, 'text/html').body.firstChild
+
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function AttachScript(src) {
     if (loadedScripts.includes(src)) return;
+    loadedScripts.push(src);
     var script = document.createElement("script");
     script.type = "text/javascript";
     document.getElementsByTagName("head")[0].appendChild(script);
@@ -37,6 +40,7 @@ const defaultLibURL = "../.."
 const getEjsAsset = (name, libURL = defaultLibURL) => `${defaultLibURL}/assets/${name}.png`;
 
 let OnElementalLoad = () => { };
+const reloadElemental = () => {console.log("reload!");};
 
 let body;
 
@@ -61,7 +65,6 @@ window.addEventListener("load", (event) => {
     reloadElemental();
 });
 
-const reloadElemental = () => { }
 
 function setTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
@@ -94,7 +97,7 @@ class Element {
             }
             this.children.push(el)
         });
-        body.render();
+        this.root().render();
         return this;
     }
 
@@ -103,13 +106,13 @@ class Element {
 
         this.children = this.children.filter(child => !toRemove.has(child));
 
-        body.render();
+        root.render();
         return this;
     }
 
     clear() {
         this.children = [];
-        body.render();
+        root.render();
         return this;
     }
 
@@ -169,6 +172,7 @@ class BodyElement extends Element {
     }
 
     render() {
+        reloadElemental();
         this.html.innerHTML = "";
 
         this.renderChildren();
@@ -557,10 +561,6 @@ class Checkbox extends Element {
     }
 }
 
-class Toggle extends Checkbox {
-
-}
-
 class Select extends Element {
     constructor({
         name = "",
@@ -870,22 +870,45 @@ class Divider extends Element {
     }
 }
 
+let temp;
+
 class HTMLInclude extends Element {
     /**
      * @param {string} src - URL of the HTML file to load
      * @param {Array} classes - optional CSS classes
      */
-    constructor({ src, classes = [], id = "" }) {
+    constructor({ src, classes = [], id = ""}) {
         super({ tag: "div", classes, attributes: { id } });
-        if (src) this.load(src);
+        if (src) this.load(src, id);
     }
 
-    async load(url) {
+    async load(url, id) {
         try {
             const res = await fetch(url);
             if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
             const htmlText = await res.text();
-            this.html.innerHTML = htmlText;
+            // this.html.innerHTML = htmlText;
+            let DOM = stringToHTML(htmlText);
+
+            if (id) {
+                DOM = DOM.querySelector(`#${id}`)
+            }
+
+            temp = DOM;
+
+            this.id = DOM.id;
+            this.tag = DOM.tagName;
+            
+            DOM.classList.forEach(x => this.classes.push(x))
+
+            DOM.childNodes.forEach(x => this.children.push(x))
+
+            for (let i = 0, atts = DOM.attributes; i < atts.length; i++) {
+                this.attributes[atts[i].nodeName] = atts[i].nodeValue;
+            }
+
+            this.root().render();
+
         } catch (err) {
             console.error(err);
             this.html.innerHTML = `<div style="color:red;">Error loading content</div>`;

@@ -103,11 +103,9 @@
 
         app.append(form);
 
-        card = new Card().append(
-            new HTMLInclude({src: "test.html"})
+        app.append(
+            new HTMLInclude({src: "test.html", id:"test"})
         );
-
-        app.append(card);
 
         body.append(app);
     }
