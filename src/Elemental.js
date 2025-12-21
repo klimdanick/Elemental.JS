@@ -63,6 +63,19 @@ window.addEventListener("load", (event) => {
 
 const reloadElemental = () => { }
 
+function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+}
+
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme) setTheme(savedTheme);
+
+function toggleTheme() {
+    const current = root.getAttribute("data-theme") || "dark";
+    setTheme(current === "dark" ? "light" : "dark");
+}
+
 class Element {
     constructor({ tag = "Element", id = "", classes = [], attributes = {}, listeners = {} }) {
         this.tag = tag;

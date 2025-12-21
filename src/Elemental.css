@@ -55,7 +55,8 @@
 
 :root {
     /* Background levels */
-    --level0: var(--CINDER_BLACK); /* Cinder Black */
+    --level0: var(--CINDER_BLACK);
+    /* Cinder Black */
     --level1: #0f1821;
     --level2: #16212b;
     --level3: #1d2b36;
@@ -117,6 +118,31 @@
     --duration-slow: 300ms;
 }
 
+:root {
+    --icon-filter: invert(0);
+}
+
+[data-theme="light"] {
+    /* Surface levels (light theme) */
+    --level0: #ffffff;
+    --level1: #f5f7fa;
+    --level2: #e9edf2;
+    --level3: #dde3ea;
+
+    --text-primary: #1b2430;
+    --text-muted: #5f6b7a;
+    --text-subtle: #8b97a8;
+    --text-invert: #ffffff;
+
+    --border-color: #d3dae3;
+    --border-color-soft: #e4e9f0;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+
+    --icon-filter: invert(1);
+}
 
 /* NORMALIZATION */
 
@@ -249,6 +275,7 @@ a {
     max-height: 1em;
     aspect-ratio: 1 / 1;
     display: inline-block;
+    filter: var(--icon-filter);
 }
 
 .input,
