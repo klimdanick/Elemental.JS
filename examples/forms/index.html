@@ -17,8 +17,8 @@
             },
             attributes: { style: "box-shadow: var(--shadow-md);" }
         })
-            .append(new Header({ level: 1 })
-                .append(
+            .append(
+                new Header({ level: 1 }).append(
                     new Icon({ src: getEjsAsset("home") }),
                     "Form example",
                     new Badge({ classes: ["primary"] }).append("New")
