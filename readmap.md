@@ -38,7 +38,7 @@
 - [x] Reset / normalize
 - [x] Typography defaults
 - [x] Spacing system
-- [ ] Color palette
+- [x] Color palette
 - [x] Border radius & shadows
 - [x] CSS variables for theming
 
@@ -55,9 +55,9 @@
 
 ### Basic Components
 - [x] Button
-- [ ] Card
-- [ ] Badge
-- [ ] Divider
+- [x] Card
+- [x] Badge
+- [x] Divider
 
 ### Layout Components
 - [ ] Navbar

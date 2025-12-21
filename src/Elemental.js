@@ -824,3 +824,48 @@ class SubmitButton extends Button {
         super({ ...options, type: "submit", classes: ["submit", ...(options.classes || [])] });
     }
 }
+
+class Card extends Element {
+    constructor({
+        id = "",
+        classes = [],
+        attributes = {}
+    } = {}) {
+        super({
+            tag: "div",
+            id,
+            classes: ["card", ...classes],
+            attributes
+        });
+    }
+}
+
+class Badge extends Element {
+    constructor({
+        id = "",
+        classes = [],
+        attributes = {}
+    } = {}) {
+        super({
+            tag: "span",
+            id,
+            classes: ["badge", ...classes],
+            attributes
+        });
+    }
+}
+
+class Divider extends Element {
+    constructor({
+        id = "",
+        classes = [],
+        attributes = {}
+    } = {}) {
+        super({
+            tag: "hr",
+            id,
+            classes: ["divider", ...classes],
+            attributes
+        });
+    }
+}

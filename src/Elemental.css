@@ -13,19 +13,19 @@
 
 :root {
     /* Spacing (margin, padding, gaps) */
-    --space-xxs: 0.125rem;
+    --space-xxs: 0.125em;
     /* 2px */
-    --space-xs: 0.25rem;
+    --space-xs: 0.25em;
     /* 4px */
-    --space-sm: 0.5rem;
+    --space-sm: 0.5em;
     /* 8px */
-    --space-md: 0.75rem;
+    --space-md: 0.75em;
     /* 12px */
-    --space-lg: 1rem;
+    --space-lg: 1em;
     /* 16px */
-    --space-xl: 1.5rem;
+    --space-xl: 1.5em;
     /* 24px */
-    --space-xxl: 2rem;
+    --space-xxl: 2em;
     /* 32px */
 }
 
@@ -286,7 +286,7 @@ a {
     padding: var(--space-xs);
     border: none;
     border-radius: var(--radius-md);
-    background-color: var(--level3);
+    background-color: var(--level2);
     color: var(--text-primary);
     font: inherit;
 }
@@ -350,7 +350,7 @@ label {
     padding: var(--space-md) var(--space-sm);
     border-radius: var(--radius-sm);
     border: var(--border-width) solid var(--primary);
-    background: var(--level3);
+    background: var(--level2);
     cursor: pointer;
     color: var(--text-primary);
     min-width: 1em;
@@ -381,7 +381,7 @@ label {
     position: absolute;
     cursor: pointer;
     inset: 0;
-    background-color: var(--level3);
+    background-color: var(--level2);
     border-radius: var(--radius-round);
     transition: background-color var(--duration-normal);
 }
@@ -443,14 +443,14 @@ label {
     padding: var(--space-sm) var(--space-md);
     border-radius: var(--radius-md);
     border: none;
-    background: var(--level3);
+    background: var(--level2);
     color: var(--text-primary);
     cursor: pointer;
     font: inherit;
 }
 
 .button:hover {
-    background: var(--level4);
+    background: var(--level3);
 }
 
 .button:disabled {
@@ -479,4 +479,49 @@ label {
 .button.loading {
     opacity: 0.7;
     pointer-events: none;
+}
+
+.card {
+    background: var(--level1);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.card.flat {
+    box-shadow: none;
+    /* background: var(--level0); */
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-sm) var(--space-xs);
+    height: 1.25em;
+    font-size: 0.75em;
+    border-radius: var(--radius-round);
+    background: var(--level2);
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.badge.primary {
+    background: var(--primary);
+    color: white;
+}
+
+.badge.success {
+    background: var(--success);
+    color: white;
+}
+
+.divider {
+    border: none;
+    height: 2px;
+    width: 100%;
+    background: var(--level4);
+}
+
+.divider.spaced {
+    margin: var(--space-md) 0;
 }

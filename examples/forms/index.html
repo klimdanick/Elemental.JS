@@ -6,7 +6,7 @@
 <script>
 
     let app;
-    let form;
+    let form, card;
     let reset, submit;
     OnElementalLoad = () => {
         app = Layout.row({ id: "mainLayout", classes: ["level0"] });
@@ -20,7 +20,8 @@
             .append(new Header({ level: 1 })
                 .append(
                     new Icon({ src: getEjsAsset("home") }),
-                    "Form example"
+                    "Form example",
+                    new Badge({ classes: ["primary"] }).append("New")
                 )
             )
             .append(
@@ -42,6 +43,7 @@
                         placeholder: "password"
                     })
                 }),
+                new Divider({}),
                 new FormGroup({
                     icon: new Icon({ src: getEjsAsset("grid"), }),
                     label: "Checkbox",
@@ -100,6 +102,14 @@
             ).root();
 
         app.append(form);
+
+        card = new Card().append(
+            new Element({ tag: "h4" }).append("Profile"),
+            new Divider({ classes: ["spaced"] }),
+            new Element({ tag: "p" }).append("User details go here.")
+        );
+
+        app.append(card);
 
         body.append(app);
     }
