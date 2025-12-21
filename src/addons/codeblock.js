@@ -1,7 +1,8 @@
-AttachScript("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js");
-AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css");
-
-let lastCodeEl;
+const codeBlockAddon = new Addon({
+  jsFiles: ["https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"],
+  cssFiles: ["https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"],
+  htmlFiles: [],
+});
 
 class CodeBlock extends Element {
     constructor({
@@ -21,7 +22,7 @@ class CodeBlock extends Element {
         classes: language ? [`language-${language}`] : []
       });
 
-      lastCodeEl = this
+      // lastCodeEl = this
       
       this.codeEl.append(code);
       this.append(this.codeEl);
