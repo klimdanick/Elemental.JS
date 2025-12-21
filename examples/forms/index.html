@@ -7,13 +7,15 @@
 
     let app;
     let form;
+    let reset, submit;
     OnElementalLoad = () => {
         app = Layout.row({ id: "mainLayout", classes: ["level0"] });
 
         form = new Form({
-            id: "form1", classes: ["level2"], onSubmit: (data) => {
+            id: "form1", classes: ["level1"], onSubmit: (data) => {
                 console.log(JSON.stringify(Object.fromEntries(data)));
-            }
+            },
+            attributes: { style: "box-shadow: var(--shadow-md);" }
         })
             .append(new Header({ level: 1 })
                 .append(
@@ -28,7 +30,7 @@
                     input: new EmailInput({
                         id: "email",
                         name: "email",
-                        placeholder: "email"
+                        placeholder: "email",
                     }),
                 }),
                 new FormGroup({
@@ -85,9 +87,16 @@
                         name: "slider"
                     })
                 }),
-            ).row({attributes: {style: "width: 100%; justify-content: space-between;"}}).append(
-                new Button({ type: "reset", classes: ["danger"] }).append(new Icon({ src: getEjsAsset("rotate_left"), }), "Reset"),
-                new Button({ type: "submit", classes: ["primary"] }).append(new Icon({ src: getEjsAsset("save"), }), "Save")
+            ).row({ attributes: { style: "width: 100%; justify-content: space-between;" } }).append(
+                reset = new Button({ type: "reset", classes: ["danger"] }).append(new Icon({ src: getEjsAsset("rotate_left"), }), "Reset"),
+                submit = new Button({
+                    type: "submit", classes: ["primary"], listeners: {
+                        click: (e) => {
+                            submit.setLoading(true);
+                            setTimeout(() => { submit.setLoading(false); }, 1000);
+                        }
+                    }
+                }).append(new Icon({ src: getEjsAsset("save") }), "Save")
             ).root();
 
         app.append(form);

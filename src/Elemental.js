@@ -116,7 +116,7 @@ class Element {
         }
 
         // Event listeners
-        for (const [event, handler] of Object.entries(this.listeners)) {
+        for (let [event, handler] of Object.entries(this.listeners)) {
             this.html.addEventListener(event, handler);
         }
 
