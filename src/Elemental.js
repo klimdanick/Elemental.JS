@@ -869,3 +869,27 @@ class Divider extends Element {
         });
     }
 }
+
+class HTMLInclude extends Element {
+    /**
+     * @param {string} src - URL of the HTML file to load
+     * @param {Array} classes - optional CSS classes
+     */
+    constructor({ src, classes = [], id = "" }) {
+        super({ tag: "div", classes, attributes: { id } });
+        if (src) this.load(src);
+    }
+
+    async load(url) {
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
+            const htmlText = await res.text();
+            this.html.innerHTML = htmlText;
+        } catch (err) {
+            console.error(err);
+            this.html.innerHTML = `<div style="color:red;">Error loading content</div>`;
+        }
+        return this;
+    }
+}

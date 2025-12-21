@@ -104,9 +104,7 @@
         app.append(form);
 
         card = new Card().append(
-            new Element({ tag: "h4" }).append("Profile"),
-            new Divider({ classes: ["spaced"] }),
-            new Element({ tag: "p" }).append("User details go here.")
+            new HTMLInclude({src: "test.html"})
         );
 
         app.append(card);
