@@ -79,8 +79,10 @@
 
 ### Built-in Behaviors
 - [ ] Dropdown menu
+- [ ] Feedback (toast, alert)
 - [ ] Modal
 - [ ] Tabs
+- [ ] Data display (table, list, graph)
 - [ ] Accordion
 
 ### Event Utilities
