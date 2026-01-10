@@ -82,6 +82,7 @@ function loadAddon(addon) {
 
 loadAddon(`${defaultLibURL}/src/addons/forms.js`)
 loadAddon(`${defaultLibURL}/src/addons/layouts.js`)
+loadAddon(`${defaultLibURL}/src/addons/menus.js`)
 
 class Addon {
     constructor({jsFiles = [], cssFiles = [], htmlFiles = []}) {

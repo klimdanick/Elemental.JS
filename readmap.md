@@ -60,9 +60,9 @@
 - [x] Divider
 
 ### Layout Components
-- [ ] Navbar
-- [ ] Footer
-- [ ] Sidebar
+- [x] Navbar
+- [x] Footer
+- [x] Sidebar
 
 ### Forms
 - [x] Text input

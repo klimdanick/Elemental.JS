@@ -10,7 +10,7 @@ class Navbar extends Layout {
         attributes = {},
         listeners = {}
     } = {}) {
-        super(tag, id, ["Navbar", "row", ...classes], attributes, listeners);
+        super({tag, id, classes: ["Navbar", "row", ...classes], attributes, listeners});
     }
 }
 
@@ -22,7 +22,7 @@ class Footer extends Layout {
         attributes = {},
         listeners = {}
     } = {}) {
-        super(tag, id, ["Footer", "row", ...classes], attributes, listeners);
+        super({tag, id, classes: ["Footer", "row", ...classes], attributes, listeners});
     }
 }
 
@@ -34,6 +34,6 @@ class Sidebar extends Layout {
         attributes = {},
         listeners = {}
     } = {}) {
-        super(tag, id, ["Sidebar", "column", ...classes], attributes, listeners);
+        super({tag, id, classes: ["Sidebar", "column", ...classes], attributes, listeners});
     }
 }
