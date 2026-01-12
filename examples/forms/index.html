@@ -6,7 +6,7 @@
 <script>
 
     let app;
-    let form, card;
+    let form;
     let reset, submit;
     OnElementalLoad = () => {
         app = Layout.row({ id: "mainLayout", classes: ["level0"] });
@@ -89,6 +89,13 @@
                         name: "slider"
                     })
                 }),
+                new FormGroup({
+                    icon: new Icon({ src: getEjsAsset("rotate_left"), }),
+                    label: "Color",
+                    input: new ColorPicker({
+                        id: "color"
+                    }),
+                }),
             ).row({ attributes: { style: "width: 100%; justify-content: space-between;" } }).append(
                 reset = new Button({ type: "reset", classes: ["danger"] }).append(new Icon({ src: getEjsAsset("rotate_left"), }), "Reset"),
                 submit = new Button({
@@ -102,11 +109,7 @@
             ).root();
 
         app.append(form);
-
-        app.append(
-            new HTMLInclude({src: "test.html", id:"test"})
-        );
-
+        
         body.append(app);
     }
 </script>

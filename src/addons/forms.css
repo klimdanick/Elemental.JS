@@ -161,3 +161,89 @@ label {
 .number-slider .slider {
     flex: 1;
 }
+
+.colorPicker input, huePicker input, satPicker input, valPicker input {
+    display: none;
+}
+
+huePicker {
+    /* display: block; */
+    width: 8em;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    cursor: crosshair;
+    background: conic-gradient(from 90deg, red, yellow, lime, cyan, blue, magenta, red);
+    position: relative;
+}
+
+huePicker::after {
+    display: block;
+    content: "";
+    width: 5em;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    cursor: default;
+    background: var(--level1);
+    position: relative;
+    left: 1.5em;
+    top: 1.5em;
+}
+
+huePicker .pointer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    height: 2px;
+    background: white;
+    transform-origin: left center;
+    transform: rotate(0deg);
+    margin: 0;
+    transition: transform var(--duration-normal) ease-in-out;
+}
+
+satPicker {
+    display: block;
+    width: 9em;
+    height: 1em;
+    border-radius: 5px;
+    background: linear-gradient(to right, rgb(128, 128, 128), red);
+    position: relative;
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+satPicker .pointer {
+    position: absolute;
+    top: 0%;
+    left: 98%;
+    width: 2px;
+    height: 100%;
+    background: white;
+    transform-origin: left center;
+    margin: 0;
+    transition: left var(--duration-normal) ease-in-out;
+}
+
+valPicker {
+    display: block;
+    height: 9em;
+    width: 1em;
+    border-radius: 5px;
+    background: linear-gradient(hsl(0, 100%, 0%), hsl(0, 100%, 50%), hsl(0, 100%, 100%));
+    position: relative;
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+valPicker .pointer {
+    position: absolute;
+    left: 0%;
+    top: 50%;
+    height: 2px;
+    width: 100%;
+    background: white;
+    transform-origin: left center;
+    margin: 0;
+    transition: top var(--duration-normal) ease-in-out;
+}

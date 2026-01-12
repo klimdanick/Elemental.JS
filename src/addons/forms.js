@@ -451,3 +451,239 @@ class SubmitButton extends Button {
         super({ ...options, type: "submit", classes: ["submit", ...(options.classes || [])] });
     }
 }
+
+let lastPickers = [];
+let lastInput;
+
+class ColorPicker extends Layout {
+    constructor({ id = "colorPicker", hue = true, sat = true, val = true } = {}) {
+        super({
+            classes: ["column", "colorPicker", "formEl"]
+        });
+
+        let row = Layout.row();
+
+        this.pickers = {};
+
+        if (hue) this.pickers.huePicker = new HuePicker({ binder: this });
+        if (sat) this.pickers.satPicker = new SatPicker({ binder: this });
+        if (val) this.pickers.valPicker = new ValPicker({ binder: this });
+
+        this.hue = 0;
+        this.sat = 100;
+        this.val = 50;
+
+        this.pickerList = Object.values(this.pickers);
+        row.append(this.pickers.huePicker, this.pickers.valPicker);
+        this.append(row, this.pickers.satPicker);
+
+        this.input = new Input({
+            type: "color",
+            name: id,
+            id: id + "_input"
+        });
+
+        this.append(this.input);
+        lastInput = this.input;
+    }
+
+    onPick_() {
+        const hex = getColorFromHSV(this.hue, this.sat, this.val);
+        this.input.value(hex);
+        this.pickerList.forEach(item => item.updateColor(this.hue, this.sat, this.val));
+    }
+}
+
+class Picker extends Element {
+    constructor(options = {}) {
+        super(options)
+        this.pointer = new Element({ classes: ["pointer"] })
+        this.append(this.pointer);
+        this.binder = options.binder;
+        if (!this.binder) this.classes.push("formEl")
+        this.listeners.click = (e) => this.onClick(e);
+    }
+
+    onClick(e) {
+        if (!this.html) return;
+        const rect = this.html.getBoundingClientRect(); // div's position & size
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+
+        const dx = x - cx;
+        const dy = y - cy;
+
+        // angle in degrees
+        let angleDeg = Math.atan2(dy, dx) * (180 / Math.PI);
+        if (angleDeg < 0) angleDeg += 360;
+
+
+        x /= rect.width;
+        x = Math.round(x * 100);
+
+        y /= rect.height;
+        y = Math.round(y * 100);
+
+        this.onPick_(x, y, angleDeg);
+    }
+
+    onPick_(x, y, a) { }
+
+    updateColor(hue, sat, val) { }
+}
+
+class HuePicker extends Picker {
+    constructor(options = {}) {
+        super({ ...options, tag: "huePicker" })
+        this.pointer.angle = 0;
+        if (!this.binder) {
+            this.input = new Input({
+                type: "number",
+                name: options.id,
+                id: options.id + "_input"
+            });
+
+            this.append(this.input);
+        }
+        this.attributes.color = "#081017";
+    }
+
+    onPick_(x, y, a) {
+        let a2 = this.pointer.angle;
+
+        a %= 360;
+        a2 %= 360;
+        if (a < 0) a = 360 + a;
+        if (a2 < 0) a2 = 360 + a2;
+
+        let d = [-360, 0, 360];
+        let minD = Infinity;
+
+        for (let i = 0; i < d.length; i++) {
+            let D = a - (a2 + d[i]);
+            if (Math.abs(D) < Math.abs(minD)) minD = D;
+        }
+
+        this.pointer.angle = this.pointer.angle + minD;
+        this.pointer.html.style.transform = `rotate(${this.pointer.angle}deg)`;
+
+        this.hue = this.pointer.angle % 360;
+        if (this.hue < 0) this.hue = 360 + this.hue;
+
+        if (this.binder) {
+            this.binder.hue = Math.round(this.hue);
+            this.binder.onPick_();
+        } else {
+            this.input.value(Math.round(this.hue));
+        }
+    }
+
+    updateColor(hue, sat, val) {
+        this.html.style.background = `conic-gradient(from 90deg, hsl(0, ${sat}%, ${val}%), hsl(60, ${sat}%, ${val}%), hsl(120, ${sat}%, ${val}%), hsl(180, ${sat}%, ${val}%), hsl(240, ${sat}%, ${val}%), hsl(300, ${sat}%, ${val}%), hsl(360, ${sat}%, ${val}%))`;
+        const hex = getColorFromHSV(hue, sat, val);
+        this.html.setAttribute("color", hex);
+    }
+}
+
+class SatPicker extends Picker {
+    constructor(options = {}) {
+        super({ ...options, tag: "satPicker" })
+        if (!this.binder) {
+            this.input = new Input({
+                type: "number",
+                name: options.id,
+                id: options.id + "_input"
+            });
+
+            this.append(this.input);
+        }
+    }
+
+    onPick_(x, y, a) {
+        this.pointer.pos = x;
+        this.sat = x;
+        this.pointer.html.style.left = `${this.pointer.pos}%`;
+
+        if (this.binder) {
+            this.binder.sat = Math.round(this.sat);
+            this.binder.onPick_();
+        } else {
+            this.input.value(Math.round(this.sat));
+        }
+    }
+
+    updateColor(hue, sat, val) {
+        this.html.style.background = `linear-gradient(to right, hsl(${hue}, 0%, ${val}%), hsl(${hue}, 100%, ${val}%))`;
+    }
+}
+
+class ValPicker extends Picker {
+    constructor(options = {}) {
+        super({ ...options, tag: "valPicker" })
+        if (!this.binder) {
+            this.input = new Input({
+                type: "number",
+                name: options.id,
+                id: options.id + "_input"
+            });
+
+            this.append(this.input);
+        }
+    }
+
+    onPick_(x, y, a) {
+        this.pointer.pos = y;
+        this.val = y;
+        this.pointer.html.style.top = `${this.pointer.pos}%`;
+
+        if (this.binder) {
+            this.binder.val = Math.round(this.val);
+            this.binder.onPick_();
+        } else {
+            this.input.value(Math.round(this.val));
+        }
+    }
+
+    updateColor(hue, sat, val) {
+        this.html.style.background = `linear-gradient(hsl(${hue}, ${sat}%, 0%), hsl(${hue}, ${sat}%, 50%), hsl(${hue}, ${sat}%, 100%))`;
+    }
+}
+
+function getColorFromHSV(h, s, v) {
+    const { r, g, b } = hsvToRgb(h, s, v);
+    const hex = rgbToHex(r, g, b);
+
+    return hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + [r, g, b]
+        .map(x => x.toString(16).padStart(2, "0"))
+        .join("");
+}
+
+function hsvToRgb(h, s, v) {
+    s /= 100;
+    v /= 100;
+
+    let c = v * s;
+    let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+    let m = v - c;
+
+    let r = 0, g = 0, b = 0;
+
+    if (0 <= h && h < 60) { r = c; g = x; b = 0; }
+    else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
+    else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
+    else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
+    else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
+    else if (300 <= h && h < 360) { r = c; g = 0; b = x; }
+
+    r = Math.round((r + m) * 255);
+    g = Math.round((g + m) * 255);
+    b = Math.round((b + m) * 255);
+
+    return { r, g, b };
+}
