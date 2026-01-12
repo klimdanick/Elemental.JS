@@ -1,0 +1,31 @@
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: var(--level1);
+    border-radius: var(--radius-md);
+}
+
+.menu-dropdown {
+    position: absolute;
+    background: var(--level1);
+    border-radius: var(--radius-md);
+    display: none;
+}
+
+.menu.open {
+    display: block;
+}
+
+.menu-item {
+    position: relative;
+}
+
+.menu-item>.menu {
+    top: 0;
+    left: 100%;
+}
+
+.menu-button {
+    background: none;
+}

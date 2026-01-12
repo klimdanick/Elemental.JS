@@ -1,0 +1,42 @@
+<html data-theme="light">
+
+<head>
+    <script src="../../src/Elemental.js"></script>
+</head>
+<script>
+
+    let app;
+    OnElementalLoad = () => {
+        app = Layout.column({ id: "mainLayout", classes: ["level0"] });
+
+        const fileMenu = new Menu({ type: "dropdown" }).append(
+            new MenuItem({ label: "New" }),
+            new MenuItem({ label: "Open" }),
+            new MenuItem({
+                label: "Export",
+                submenu: new Menu({ type: "dropdown" }).append(
+                    new MenuItem({ label: "PDF" }),
+                    new MenuItem({ label: "PNG" })
+                )
+            })
+        );
+
+        const menuBar = new Menu({ type: "bar", vertical: false }).append(
+            new MenuItem({
+                label: "File",
+                submenu: fileMenu
+            }),
+            new MenuItem({ label: "Edit" })
+        );
+
+        app.append(menuBar);
+
+        body.append(app);
+    }
+</script>
+<style>
+</style>
+
+<body></body>
+
+</html>

@@ -13,8 +13,9 @@ class Menu extends Element {
     }
 
     show() {
-        this.html.classList.add("open");
         this.open = true;
+        this.html.classList.add("open");
+        this.closeSiblings();
     }
 
     hide() {
@@ -23,8 +24,14 @@ class Menu extends Element {
     }
 
     toggle() {
+        console.log(this.html);
         this.open ? this.hide() : this.show();
     }
+
+    closeSiblings() {
+        const siblings = this.html.parentElement?.querySelectorAll(".menu.open");
+        siblings?.forEach(m => m !== this.html && m.classList.remove("open"));
+    };
 }
 
 class MenuItem extends Element {
@@ -34,21 +41,18 @@ class MenuItem extends Element {
             classes: ["menu-item"]
         });
 
-        this.button = new Element({
-            tag: "button",
-            classes: ["menu-button"]
+        this.button = new Button({
+            classes: ["menu-button"],
+            onClick: action
         }).append(label);
 
         this.append(this.button);
-
-        if (action) {
-            this.button.html.addEventListener("click", action);
-        }
 
         if (submenu) {
             this.submenu = submenu;
             this.append(submenu);
             this.html.classList.add("has-submenu");
+            if (!action) this.button.onClick = () => submenu.toggle()
         }
     }
 }
