@@ -54,9 +54,16 @@ class BarGraph extends Element {
     constructor({ values = [], labels = [] } = {}) {
         super({ tag: "div", classes: ["bar-graph"] });
 
-        const max = Math.max(...values);
+        this.values = values;
+        this.labels = labels;
+    }
 
-        values.forEach((value, i) => {
+    render() {
+        this.clear();
+
+        const max = Math.max(...this.values);
+
+        this.values.forEach((value, i) => {
             const bar = new Element({
                 tag: "div",
                 classes: ["bar"],
@@ -65,11 +72,13 @@ class BarGraph extends Element {
 
             bar.append(
                 new Element({ tag: "span", classes: ["bar-label"] })
-                    .append(labels[i] ?? "")
+                    .append(this.labels[i] ?? "")
             );
 
             this.append(bar);
         });
+
+        super.render();
     }
 }
 
@@ -77,8 +86,14 @@ class ProgressBar extends Element {
     constructor({ value = 0 } = {}) {
         super({ tag: "div", classes: ["progress"] });
 
-        const fill = new Element({ classes: ["progress-fill"], attributes: {style: `width: ${value}%`} });
+        this.value = value;
+        this.fill = new Element({ classes: ["progress-fill"], attributes: {style: `width: ${value}%`} });
 
-        this.append(fill);
+        this.append(this.fill);
+    }
+
+    render() {
+        this.fill.attributes.style =`width: ${this.value}%`;
+        super.render();
     }
 }

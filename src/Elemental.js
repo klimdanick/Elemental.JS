@@ -120,6 +120,9 @@ class Element {
         this.parent = null;
         this.level = 0;
         this.useLevelSystem = true;
+        this.attached = false;
+
+        this.html = document.createElement(this.tag);
     }
 
     append(...elements) {
@@ -129,7 +132,6 @@ class Element {
             }
             this.children.push(el)
         });
-        this.root().render();
         return this;
     }
 
@@ -137,19 +139,19 @@ class Element {
         const toRemove = new Set(elements.flat());
 
         this.children = this.children.filter(child => !toRemove.has(child));
-
-        this.root().render();
         return this;
     }
 
     clear() {
         this.children = [];
-        root.render();
         return this;
     }
 
     render() {
-        this.html = document.createElement(this.tag);
+
+        while (this.html?.firstChild) {
+            this.html.removeChild(this.html.lastChild);
+        }
 
         this.html.id = this.id;
 
@@ -168,14 +170,17 @@ class Element {
             this.html.addEventListener(event, handler);
         }
 
-        this.parent?.html.appendChild(this.html);
+        if (!this.attached) {
+            this.parent?.html.appendChild(this.html);
+            this.attached = true;
+        }
 
         if (this.useLevelSystem == true) {
             let cssLevel = getComputedStyle(this.html).getPropertyValue('--level');
             let inc = 0;
             if (!cssLevel) inc = 1;
             if (cssLevel == "increment") inc = 1;
-            if (cssLevel == "decrement") inc= -1;
+            if (cssLevel == "decrement") inc = -1;
             this.level = this.parent?.level + (inc) || 0;
 
             if (this.level > 10) this.level = 0;
@@ -193,6 +198,7 @@ class Element {
     renderChildren() {
         this.children.flat().forEach(el => {
             if (el instanceof Element) {
+                el.attached = false;
                 el.render();
             } else if (el instanceof Node) {
                 this.html.appendChild(el);
@@ -516,4 +522,34 @@ class HTMLInclude extends Element {
         }
         return this;
     }
+}
+
+
+
+
+/*------------------\
+|      STATES       |
+\------------------*/
+
+function createState(initialValue) {
+    let value = initialValue;
+    const subscribers = new Set();
+
+    return {
+        get() {
+            return value;
+        },
+
+        set(newValue) {
+            if (Object.is(value, newValue)) return;
+            value = newValue;
+            subscribers.forEach(fn => fn(value));
+        },
+
+        subscribe(fn) {
+            subscribers.add(fn);
+            // fn(value); // optional: fire immediately
+            return () => subscribers.delete(fn);
+        }
+    };
 }

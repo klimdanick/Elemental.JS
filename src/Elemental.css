@@ -412,6 +412,16 @@ a {
     color: white;
 }
 
+.badge.warning {
+    background: var(--warning);
+    color: white;
+}
+
+.badge.danger {
+    background: var(--danger);
+    color: white;
+}
+
 .divider {
     border: none;
     height: 2px;
