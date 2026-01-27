@@ -1,0 +1,111 @@
+.table {
+    width: fit-content;
+    border-collapse: collapse;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    --level: increment;
+}
+
+.table th,
+.table td {
+    padding: var(--space-sm) var(--space-md);
+    text-align: left;
+    --level: keep;
+}
+
+.table thead {
+    --level: increment;
+    border-bottom: 2px solid var(--hover-color);
+}
+
+.table tbody {
+    --level: keep;
+}
+
+.table tr:not(:last-child) {
+    border-bottom: 2px solid var(--hover-color);
+}
+
+.table tr td:not(:last-child),
+.table tr th:not(:last-child) {
+    border-right: 2px solid var(--hover-color);
+}
+
+.table tr {
+    --level: keep;
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.list li:not(:last-child) {
+    border-bottom: 2px solid var(--hover-color);
+}
+
+.list-item {
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--border);
+}
+
+.bar-graph {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: var(--space-sm);
+    height: 150px;
+    width: fit-content;
+    padding: var(--space-sm) var(--space-md) var(--space-lg) var(--space-md);
+    border-radius: var(--radius-md);
+}
+
+.bar {
+    flex: 1;
+    background: var(--primary);
+    border-radius: var(--radius-sm);
+    position: relative;
+    width: 1em;
+}
+
+.bar-graph .bar:nth-child(4n+3) {
+    background: var(--DEBIAN_RED);
+}
+
+.bar-graph .bar:nth-child(4n+2) {
+    background: var(--AQUA_GREEN);
+}
+
+.bar-graph .bar:nth-child(4n+1) {
+    background: var(--CURIOS_BLUE);
+}
+
+.bar-graph .bar:nth-child(4n) {
+    background: var(--TURMERIC_YELLOW);
+}
+
+.bar-label {
+    position: absolute;
+    bottom: -1.2em;
+    font-size: 0.75rem;
+    text-align: center;
+    width: 100%;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.progress {
+    height: 1em;
+    background: var(--level2);
+    border-radius: 999px;
+    padding: 5px;
+}
+
+.progress-fill {
+    display: block;
+    height: 100%;
+    background: var(--primary);
+    border-radius: inherit;
+}

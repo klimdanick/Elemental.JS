@@ -349,7 +349,8 @@ a {
     border-radius: var(--radius-md);
     color: var(--text-primary);
     white-space: nowrap;
-    --level: keep;
+    --level: null;
+    background: var(--level4);
 }
 
 .badge.primary {

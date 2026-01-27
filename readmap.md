@@ -26,7 +26,7 @@
 - [x] Optional `clear()` helper
 
 ### Error Handling
-- [ ] Helpful runtime errors for invalid tags or props
+- [x] Helpful runtime errors for invalid tags or props
 - [x] Safe handling of `null` / `undefined` children
 
 ---
@@ -82,7 +82,7 @@
 - [x] Feedback (toast, alert)
 - [x] Modal
 - [ ] Tabs
-- [ ] Data display (table, list, graph)
+- [x] Data display (table, list, graph)
 - [x] Accordion
 
 ### Event Utilities

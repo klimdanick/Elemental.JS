@@ -108,7 +108,7 @@
         let card = new Card()
             .append(
                 imgEl,
-                new Header({level:1}).append(data.name),
+                new Header({level:3}).append(data.name),
             );
 
         cardGrid.append(card);
@@ -117,12 +117,13 @@
 <style>
 
     .card {
-        max-width: fit-content;
-        width: 300px;
+        max-width: 350px;
+        width: 600px;
     }
 
     .card .image {
-        height: 150px;
+        width: 350px;
+        border-radius: var(--radius-md);
         aspect-ratio: 16/9;
         object-fit: cover;
     }
@@ -177,7 +178,7 @@
 
     #cardGrid {
         --level: keep;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, 1fr);
     }
 
     #cardGrid * {

@@ -1,0 +1,44 @@
+<html data-theme="light">
+
+<head>
+    <script src="../../src/Elemental.js"></script>
+</head>
+<script>
+    let app;
+    OnElementalLoad = () => {
+        app = Layout.row({ id: "mainLayout" });
+
+        let table = new Table({
+            columns: ["Name", "Age", "Role"],
+            data: [
+                ["Alice", 24, "Admin"],
+                ["Bob", 31, "User"],
+            ]
+        });
+
+        let list = new List([
+            "Item A",
+            new Badge({ classes: ["primary"] }).append("New")
+        ]);
+
+        let bars = new BarGraph({
+            values: [40, 70, 25, 10],
+            labels: ["A", "B", "C", "D"]
+        });
+
+        let prog = new ProgressBar({ value: 65 });
+
+        app.append(table, list, bars, prog);
+
+        body.append(app);
+    }
+</script>
+<style>
+    .progress {
+        width: 200px;
+    }
+</style>
+
+<body></body>
+
+</html>
