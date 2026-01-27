@@ -78,12 +78,12 @@
 **Goal:** Enhance UI with minimal JS.
 
 ### Built-in Behaviors
-- [ ] Dropdown menu
-- [ ] Feedback (toast, alert)
-- [ ] Modal
+- [x] Dropdown menu
+- [x] Feedback (toast, alert)
+- [x] Modal
 - [ ] Tabs
 - [ ] Data display (table, list, graph)
-- [ ] Accordion
+- [x] Accordion
 
 ### Event Utilities
 - [ ] Event delegation helpers

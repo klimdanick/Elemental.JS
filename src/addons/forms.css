@@ -1,3 +1,7 @@
+form * {
+    --level: keep;
+}
+
 input,
 textarea,
 select {
@@ -15,6 +19,8 @@ select {
     background-color: var(--level2);
     color: var(--text-primary);
     font: inherit;
+    --level: keep;
+    /* background-color: unset; */
 }
 
 .numberInput {
@@ -31,6 +37,7 @@ select {
 .form-group {
     justify-content: flex-start;
     width: 100%;
+    --level: keep;
 }
 
 .form-group.column {

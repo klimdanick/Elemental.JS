@@ -9,10 +9,10 @@
     let form;
     let reset, submit;
     OnElementalLoad = () => {
-        app = Layout.row({ id: "mainLayout", classes: ["level0"] });
+        app = Layout.row({ id: "mainLayout" });
 
         form = new Form({
-            id: "form1", classes: ["level1"], onSubmit: (data) => {
+            id: "form1", onSubmit: (data) => {
                 console.log(JSON.stringify(Object.fromEntries(data)));
             },
             attributes: { style: "box-shadow: var(--shadow-md);" }

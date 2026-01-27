@@ -1,0 +1,41 @@
+.feedback {
+    display: flex;
+    align-items: start;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+}
+
+.feedback.info {
+    background: var(--primary);
+}
+
+.feedback.success {
+    background: var(--success);
+}
+
+.feedback.warning {
+    background: var(--warning);
+}
+
+.feedback.error {
+    background: var(--danger);
+}
+
+.feedback .icon {
+    line-height: 1;
+    font-size: 1.1em;
+}
+
+Toast {
+    width: fit-content;
+}
+
+#toastLayout {
+    width: fit-content;
+    height: fit-content;
+    position: absolute;
+    right: var(--space-sm);
+    top: var(--space-sm);
+}

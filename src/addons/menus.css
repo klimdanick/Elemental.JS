@@ -2,23 +2,44 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    background: var(--level1);
     border-radius: var(--radius-md);
+    --level: increment;
+}
+
+.menu-cascading {
+    position: absolute;
+    overflow: visible;
 }
 
 .menu-dropdown {
-    position: absolute;
-    background: var(--level1);
-    border-radius: var(--radius-md);
-    display: none;
+    transform-origin: translate(0%, -50%);
+    max-height: 0;
+    transition: max-height 500ms ease-in-out, overflow 0s linear 500ms;
+}
+
+.menu-dropdown.open {
+    max-height: fit-content;
+}
+
+.menu-item:has(.menu-hamburger) {
+    max-width: 2.5em;
+    transition: max-width 500ms ease-in-out, overflow 1s linear 5000ms;
+}
+
+.menu-item:has(.menu-hamburger.open) {
+    max-width: 11em;
 }
 
 .menu.open {
-    display: block;
+    /* display: block; */
 }
 
 .menu-item {
     position: relative;
+    list-style: none;
+    border-radius: var(--radius-md);
+    --level: keep;
+    overflow: hidden;
 }
 
 .menu-item>.menu {
@@ -26,6 +47,100 @@
     left: 100%;
 }
 
+.menu-item .menu-dropdown {
+    /* --level: keep; */
+}
+
 .menu-button {
     background: none;
+    --level: keep;
+    width: 100%;
+}
+
+/* .menu-button:has(+ .menu-bento) {
+    width: auto;
+} */
+
+.menu-bento {
+    /* position: relative; */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    max-height: 0;
+    max-width: 0;
+    transition: max-width var(--duration-slow) ease, max-height var(--duration-slow) ease;
+}
+
+.menu-bento.submenu {
+    /* transform: translate(-100%, 0%); */
+    transform-origin: left top;
+}
+
+.menu-bento.open {
+    max-height: fit-content;
+    max-width: fit-content;
+}
+
+.menu-button.has-label .icon {
+    margin-right: 0.6em;
+}
+
+.menu-bento > .menu-item .menu-button {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--text-xs);
+}
+
+.menu-bento > .menu-item .menu-button .icon {
+    max-width: 1rem;
+    max-height: 1rem;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    background: none;
+}
+
+.modal.open {
+    display: flex;
+}
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.modal-dialog {
+    position: relative;
+    background: var(--level1);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    min-width: 300px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: auto;
+    box-shadow: var(--shadow-lg);
+    animation: modal-in 0.15s ease-out;
+}
+
+@keyframes modal-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Prevent body scroll */
+body.modal-open {
+    overflow: hidden;
 }

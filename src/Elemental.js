@@ -35,12 +35,12 @@ function AttachStyle(src) {
     style.href = src;
 }
 
-const defaultLibURL = "../.."
+const defaultLibURL = "http://127.0.0.1:8080/"
 
 const getEjsAsset = (name, libURL = defaultLibURL) => `${defaultLibURL}/assets/${name}.png`;
 
 let OnElementalLoad = () => { };
-const reloadElemental = () => {console.log("reload!");};
+const reloadElemental = () => { console.log("reload!"); };
 
 let body;
 
@@ -83,9 +83,10 @@ function loadAddon(addon) {
 loadAddon(`${defaultLibURL}/src/addons/forms.js`)
 loadAddon(`${defaultLibURL}/src/addons/layouts.js`)
 loadAddon(`${defaultLibURL}/src/addons/menus.js`)
+loadAddon(`${defaultLibURL}/src/addons/feedback.js`)
 
 class Addon {
-    constructor({jsFiles = [], cssFiles = [], htmlFiles = []}) {
+    constructor({ jsFiles = [], cssFiles = [], htmlFiles = [] }) {
         this.jsFiles = jsFiles;
         this.cssFiles = cssFiles;
         this.htmlFiles = htmlFiles;
@@ -116,6 +117,8 @@ class Element {
         this.listeners = listeners;
         this.children = [];
         this.parent = null;
+        this.level = 0;
+        this.useLevelSystem = true;
     }
 
     append(...elements) {
@@ -134,7 +137,7 @@ class Element {
 
         this.children = this.children.filter(child => !toRemove.has(child));
 
-        root.render();
+        this.root().render();
         return this;
     }
 
@@ -164,6 +167,23 @@ class Element {
             this.html.addEventListener(event, handler);
         }
 
+        this.parent?.html.appendChild(this.html);
+
+        if (this.useLevelSystem == true) {
+            let cssLevel = getComputedStyle(this.html).getPropertyValue('--level');
+            let inc = 0;
+            if (!cssLevel) inc = 1;
+            if (cssLevel == "increment") inc = 1;
+            if (cssLevel == "decrement") inc= -1;
+            this.level = this.parent?.level + (inc) || 0;
+
+            if (this.level > 3) this.level = 0;
+
+            if (cssLevel != "null")
+                this.html.classList.add(`level${this.level}`);
+
+        }
+
         this.renderChildren();
 
         return this;
@@ -173,7 +193,6 @@ class Element {
         this.children.flat().forEach(el => {
             if (el instanceof Element) {
                 el.render();
-                this.html.appendChild(el.html);
             } else if (el instanceof Node) {
                 this.html.appendChild(el);
             } else if (typeof el === "string" || typeof el === "number") {
@@ -197,6 +216,7 @@ class BodyElement extends Element {
     constructor() {
         super("body");
         this.html = document.body
+        this.level = -1;
     }
 
     render() {
@@ -301,6 +321,7 @@ class ImageEl extends Element {
             listeners
         });
 
+        this.useLevelSystem = false;
     }
 }
 
@@ -342,6 +363,7 @@ class Header extends Element {
             attributes,
             listeners
         });
+        this.useLevelSystem = false;
     }
 }
 
@@ -455,7 +477,7 @@ class HTMLInclude extends Element {
      * @param {string} src - URL of the HTML file to load
      * @param {Array} classes - optional CSS classes
      */
-    constructor({ src, classes = [], id = ""}) {
+    constructor({ src, classes = [], id = "" }) {
         super({ tag: "div", classes, attributes: { id } });
         if (src) this.load(src, id);
     }
@@ -476,7 +498,7 @@ class HTMLInclude extends Element {
 
             this.id = DOM.id;
             this.tag = DOM.tagName;
-            
+
             DOM.classList.forEach(x => this.classes.push(x))
 
             DOM.childNodes.forEach(x => this.children.push(x))

@@ -98,9 +98,9 @@
 }
 
 :root {
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.25);
-    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.48);
 }
 
 :root {
@@ -186,6 +186,8 @@ a {
     display: inline-flex;
     align-items: center;
     gap: var(--space-md);
+    --level: null;
+    background-color: transparent;
 }
 
 h1 {
@@ -212,22 +214,25 @@ a {
 
 .level0 {
     background-color: var(--level0);
+    --hover-color: var(--level1);
 }
 
 .level1 {
     background-color: var(--level1);
+    --hover-color: var(--level2);
 }
 
 .level2 {
     background-color: var(--level2);
+    --hover-color: var(--level3);
 }
 
 .level3 {
     background-color: var(--level3);
+    --hover-color: var(--level0);
 }
 
 /* element styles */
-
 
 .layout {
     display: flex;
@@ -266,6 +271,7 @@ a {
     max-width: 100%;
     height: auto;
     display: block;
+    --level: keep;
 }
 
 .icon {
@@ -274,6 +280,8 @@ a {
     aspect-ratio: 1 / 1;
     display: inline-block;
     filter: var(--icon-filter);
+    --level: keep;
+    background-color: transparent;
 }
 
 .button {
@@ -283,14 +291,14 @@ a {
     padding: var(--space-sm) var(--space-md);
     border-radius: var(--radius-md);
     border: none;
-    background: var(--level2);
     color: var(--text-primary);
     cursor: pointer;
     font: inherit;
+    --level: increment;
 }
 
 .button:hover {
-    background: var(--level3);
+    background: var(--hover-color);
 }
 
 .button:disabled {
@@ -322,7 +330,6 @@ a {
 }
 
 .card {
-    background: var(--level1);
     border-radius: var(--radius-md);
     padding: var(--space-md);
     box-shadow: var(--shadow-sm);
@@ -340,9 +347,9 @@ a {
     height: 1.25em;
     font-size: 0.75em;
     border-radius: var(--radius-md);
-    background: var(--level2);
     color: var(--text-primary);
     white-space: nowrap;
+    --level: keep;
 }
 
 .badge.primary {
@@ -359,7 +366,7 @@ a {
     border: none;
     height: 2px;
     width: 100%;
-    background: var(--level4);
+    --level: increment;
 }
 
 .divider.spaced {
