@@ -61,6 +61,12 @@
     --level2: #16212b;
     --level3: #1d2b36;
     --level4: #253643;
+    --level5: #2c3f4e;
+    --level6: #394f5f;
+    --level7: #435a6b;
+    --level8: #546e81;
+    --level9: #6e8ca1;
+    --level10: #91afc4;
 
     /* Text */
     --text-primary: #e6edf3;
@@ -128,6 +134,14 @@
     --level1: #f5f7fa;
     --level2: #e9edf2;
     --level3: #dde3ea;
+    --level4: #c4cdd6;
+    --level5: #b7bfca;
+    --level6: #a4afb9;
+    --level7: #9ea8b3;
+    --level8: #96a0a9;
+    --level9: #767d84;
+    --level10: #636a71;
+    
 
     --text-primary: #1b2430;
     --text-muted: #5f6b7a;
@@ -229,6 +243,41 @@ a {
 
 .level3 {
     background-color: var(--level3);
+    --hover-color: var(--level4);
+}
+
+.level4 {
+    background-color: var(--level4);
+    --hover-color: var(--level5);
+}
+
+.level5 {
+    background-color: var(--level5);
+    --hover-color: var(--level6);
+}
+
+.level6 {
+    background-color: var(--level6);
+    --hover-color: var(--level7);
+}
+
+.level7 {
+    background-color: var(--level7);
+    --hover-color: var(--level8);
+}
+
+.level8 {
+    background-color: var(--level8);
+    --hover-color: var(--level9);
+}
+
+.level9 {
+    background-color: var(--level9);
+    --hover-color: var(--level10);
+}
+
+.level10 {
+    background-color: var(--level10);
     --hover-color: var(--level0);
 }
 

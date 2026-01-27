@@ -178,7 +178,7 @@ class Element {
             if (cssLevel == "decrement") inc= -1;
             this.level = this.parent?.level + (inc) || 0;
 
-            if (this.level > 3) this.level = 0;
+            if (this.level > 10) this.level = 0;
 
             if (cssLevel != "null")
                 this.html.classList.add(`level${this.level}`);

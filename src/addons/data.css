@@ -98,9 +98,9 @@
 
 .progress {
     height: 1em;
-    background: var(--level2);
     border-radius: 999px;
     padding: 5px;
+    --level: increment;
 }
 
 .progress-fill {
@@ -108,4 +108,5 @@
     height: 100%;
     background: var(--primary);
     border-radius: inherit;
+    --level: null;
 }
