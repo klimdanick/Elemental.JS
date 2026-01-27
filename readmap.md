@@ -95,10 +95,10 @@
 ## Phase 5 — Simple State Management (Optional)
 **Goal:** Enable small dynamic apps without complexity.
 
-- [ ] `createState(initialValue)`
-- [ ] Subscriptions
-- [ ] Manual re-render pattern
-- [ ] Explicit updates (no auto magic)
+- [x] `createState(initialValue)`
+- [x] Subscriptions
+- [x] Manual re-render pattern
+- [x] Explicit updates (no auto magic)
 
 ---
 
