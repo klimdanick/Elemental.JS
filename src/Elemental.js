@@ -436,13 +436,15 @@ class Card extends Element {
     constructor({
         id = "",
         classes = [],
-        attributes = {}
+        attributes = {},
+        listeners = {},
     } = {}) {
         super({
             tag: "div",
             id,
             classes: ["card", ...classes],
-            attributes
+            attributes,
+            listeners,
         });
     }
 }
