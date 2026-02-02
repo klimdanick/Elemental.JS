@@ -110,3 +110,7 @@
     border-radius: inherit;
     --level: null;
 }
+
+.lineGraph {
+    color: var(--danger);
+}

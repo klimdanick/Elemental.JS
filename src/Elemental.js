@@ -477,6 +477,27 @@ class Divider extends Element {
     }
 }
 
+class Canvas extends Element {
+    constructor(options = {}) {
+        super({
+            tag: "canvas",
+            ...options
+        });
+
+        this.fps = options.fps || 30;
+
+        this.ctx = this.html.getContext("2d");
+
+        this.init(this.ctx);
+
+        this.updateLoop = setInterval(() => this.update(this.ctx), 1000/this.fps);
+    }
+
+    init(ctx) {}
+
+    update(ctx) {}
+}
+
 let temp;
 
 class HTMLInclude extends Element {
