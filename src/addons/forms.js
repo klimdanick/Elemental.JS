@@ -253,13 +253,15 @@ class Select extends Element {
         value = "",
         id = "",
         classes = [],
-        attributes = {}
+        attributes = {},
+        listeners = {},
     } = {}) {
         super({
             tag: "select",
             id,
             classes: ["select", "formEl", ...classes],
-            attributes: { name, ...attributes }
+            attributes: { name, ...attributes },
+            listeners
         });
 
         this.options = options;

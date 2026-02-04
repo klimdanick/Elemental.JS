@@ -38,4 +38,5 @@ Toast {
     position: absolute;
     right: var(--space-sm);
     top: var(--space-sm);
+    background: transparent;
 }

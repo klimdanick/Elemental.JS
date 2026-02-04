@@ -142,6 +142,7 @@ class Modal extends Element {
       body.append(this);
       document.body.classList.add("modal-open");
       document.addEventListener("keydown", this._onKeyDown);
+      body.render();
   
       this.html.classList.add("open");
   

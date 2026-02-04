@@ -21,7 +21,8 @@ class Toast extends Element {
 
         if (!ToastLayout) {
             ToastLayout = Layout.column({ id: "toastLayout"});
-            body.append(ToastLayout)
+            body.append(ToastLayout);
+            body.render();
         }
     }
 
@@ -30,6 +31,7 @@ class Toast extends Element {
     show() {
         let toast = this.buildToast();
         ToastLayout.append(toast);
-        setTimeout(() => {ToastLayout.remove(toast)}, this.duration);
+        body.render();
+        setTimeout(() => {ToastLayout.remove(toast); body.render();}, this.duration);
     }
 }

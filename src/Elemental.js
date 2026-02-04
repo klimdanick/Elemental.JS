@@ -229,9 +229,12 @@ class BodyElement extends Element {
     render() {
         reloadElemental();
         this.html.innerHTML = "";
-
+        
         this.renderChildren();
+        this.rerender();
     }
+
+    rerender() {}
 }
 
 class Layout extends Element {
