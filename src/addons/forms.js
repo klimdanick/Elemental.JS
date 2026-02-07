@@ -195,7 +195,8 @@ class TextArea extends Element {
         rows = 4,
         id = "",
         classes = [],
-        attributes = {}
+        attributes = {},
+        listeners = {}
     } = {}) {
         super({
             tag: "textarea",
@@ -205,7 +206,8 @@ class TextArea extends Element {
                 name,
                 rows,
                 ...attributes
-            }
+            },
+            listeners
         });
 
         this.html.value = value;
