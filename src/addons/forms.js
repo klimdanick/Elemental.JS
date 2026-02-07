@@ -578,7 +578,7 @@ class HuePicker extends Picker {
         this.hue = this.pointer.angle % 360;
         if (this.hue < 0) this.hue = 360 + this.hue;
 
-        hueState.set(this.hue);
+        this.hueState.set(this.hue);
 
         if (this.binder) {
             this.binder.hue = Math.round(this.hue);
@@ -616,6 +616,8 @@ class SatPicker extends Picker {
         this.sat = x;
         this.pointer.html.style.left = `${this.pointer.pos}%`;
 
+        this.satState.set(this.sat);
+
         if (this.binder) {
             this.binder.sat = Math.round(this.sat);
             this.binder.onPick_();
@@ -649,6 +651,8 @@ class ValPicker extends Picker {
         this.pointer.pos = y;
         this.val = y;
         this.pointer.html.style.top = `${this.pointer.pos}%`;
+
+        this.valState.set(this.val);
 
         if (this.binder) {
             this.binder.val = Math.round(this.val);
