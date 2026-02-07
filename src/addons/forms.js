@@ -504,6 +504,8 @@ class Picker extends Element {
         this.binder = options.binder;
         if (!this.binder) this.classes.push("formEl")
         this.listeners.click = (e) => this.onClick(e);
+
+        this.colState = createState("#081017");
     }
 
     onClick(e) {
@@ -550,6 +552,8 @@ class HuePicker extends Picker {
             this.append(this.input);
         }
         this.attributes.color = "#081017";
+
+        this.hueState = createState(0);
     }
 
     onPick_(x, y, a) {
@@ -573,6 +577,8 @@ class HuePicker extends Picker {
 
         this.hue = this.pointer.angle % 360;
         if (this.hue < 0) this.hue = 360 + this.hue;
+
+        hueState.set(this.hue);
 
         if (this.binder) {
             this.binder.hue = Math.round(this.hue);
@@ -600,6 +606,8 @@ class SatPicker extends Picker {
             });
 
             this.append(this.input);
+
+            this.satState = createState(0);
         }
     }
 
@@ -632,6 +640,8 @@ class ValPicker extends Picker {
             });
 
             this.append(this.input);
+
+            this.valState = createState(0);
         }
     }
 
