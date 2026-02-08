@@ -163,6 +163,7 @@ class Modal extends Element {
     document.body.classList.remove("modal-open");
 
     body.append(remove);
+    body.render();
     this._previousFocus?.focus();
   }
 }
