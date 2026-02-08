@@ -7,16 +7,12 @@ class Form extends Layout {
         super({ tag: "form", ...opts });
 
         this.onSubmit = onSubmit;
-    }
 
-    render() {
-        super.render();
-        if (this.onSubmit) {
-            this.html.addEventListener("submit", (e) => {
+        if (this.submit)
+            this.listeners.submit = (e) => {
                 e.preventDefault();
                 this.onSubmit(new FormData(this.html), e);
-            });
-        }
+            }
     }
 
     data() {
