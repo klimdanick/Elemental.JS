@@ -162,7 +162,7 @@ class Modal extends Element {
     document.removeEventListener("keydown", this._onKeyDown);
     document.body.classList.remove("modal-open");
 
-    body.append(this);
+    body.append(remove);
     this._previousFocus?.focus();
   }
 }
