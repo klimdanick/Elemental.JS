@@ -35,7 +35,8 @@ function AttachStyle(src) {
     style.href = src;
 }
 
-const defaultLibURL = document.currentScript.src.replace(/src\/Elemental.js/, "")
+const defaultLibURL = document.currentScript.src.toLowerCase().replace(/src\/elemental.js/, "")
+console.log(defaultLibURL)
 
 const getEjsAsset = (name, libURL = defaultLibURL) => `${defaultLibURL}/assets/${name}.png`;
 
