@@ -1,6 +1,8 @@
 let loadedScripts = [];
 let loadedStyles = [];
 
+let loadedHtml = {};
+
 const root = document.querySelector(':root');
 let CINDER_BLACK;
 let BLACK_PEARL;
@@ -14,6 +16,7 @@ let level0;
 let level1;
 
 const stringToHTML = string => new DOMParser().parseFromString(string, 'text/html').body.firstChild
+const stringToSVG = string => new DOMParser().parseFromString(string, 'image/svg+xml').documentElement
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -38,7 +41,7 @@ function AttachStyle(src) {
 const defaultLibURL = document.currentScript.src.toLowerCase().replace(/src\/elemental.js/, "")
 console.log(defaultLibURL)
 
-const getEjsAsset = (name, libURL = defaultLibURL) => `${defaultLibURL}/assets/${name}.png`;
+const getEjsAsset = (name, type = "svg", libURL = defaultLibURL) => `${defaultLibURL}/assets/${type}/${name}.${type}`;
 
 let OnElementalLoad = () => { };
 const reloadElemental = () => { console.log("reload!"); };
@@ -230,12 +233,12 @@ class BodyElement extends Element {
     render() {
         reloadElemental();
         this.html.innerHTML = "";
-        
+
         this.renderChildren();
         this.rerender();
     }
 
-    rerender() {}
+    rerender() { }
 }
 
 class Layout extends Element {
@@ -336,7 +339,7 @@ class ImageEl extends Element {
     }
 }
 
-class Icon extends ImageEl {
+class PngIcon extends ImageEl {
     constructor({
         src,
         alt = "",
@@ -355,7 +358,87 @@ class Icon extends ImageEl {
             listeners,
             lazy
         });
+    }
+}
 
+class Icon extends Element {
+    constructor({
+        src,
+        alt = "",
+        id = "",
+        classes = [],
+        attributes = {},
+        listeners = {},
+    }) {
+        super({
+            src,
+            alt,
+            id,
+            classes: ["icon", ...classes],
+            attributes,
+            listeners,
+            tag: "svg",
+        });
+
+        this.loadSVG(src);
+
+    }
+
+    async loadSVG(url) {
+        try {
+            if (!loadedHtml[url]) {
+                loadedHtml[url] = fetch(url)
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error(`Failed to load ${url}: ${res.status}`);
+                        }
+                        return res.text();
+                    });
+            }
+
+            const htmlText = await loadedHtml[url];
+
+            let DOM = stringToSVG(htmlText);
+
+            this.html = DOM;
+
+            this.html.classList.add("icon");
+
+            this.end().render();
+
+        } catch (err) {
+            console.error(err);
+            this.html.innerHTML = `<div style="color:red;">Error loading content</div>`;
+        }
+
+        return this;
+    }
+
+    render() {
+
+        this.html.id = this.id;
+
+        // Classes
+        if (Array.isArray(this.classes)) {
+            this.html.classList.add(...this.classes);
+        }
+
+        // Attributes
+        for (const [key, value] of Object.entries(this.attributes)) {
+            this.html.setAttribute(key, value);
+        }
+
+        // Event listeners
+        for (let [event, handler] of Object.entries(this.listeners)) {
+            this.html.addEventListener(event, handler);
+        }
+
+        if (!this.attached) {
+            this.parent?.html.appendChild(this.html);
+            this.attached = true;
+        }
+
+        return this;
     }
 }
 
@@ -496,12 +579,12 @@ class Canvas extends Element {
 
         this.init(this.ctx);
 
-        this.updateLoop = setInterval(() => this.update(this.ctx), 1000/this.fps);
+        this.updateLoop = setInterval(() => this.update(this.ctx), 1000 / this.fps);
     }
 
-    init(ctx) {}
+    init(ctx) { }
 
-    update(ctx) {}
+    update(ctx) { }
 }
 
 let temp;

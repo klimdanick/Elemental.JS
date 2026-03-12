@@ -24,10 +24,10 @@
         files.forEach(file => {
             let item;
             if (typeof file == "string") {
-                item = new MenuItem({ label: file, icon: new Icon({ src: getEjsAsset("text"), classes: ["note"] }) })
+                item = new MenuItem({ label: file, icon: new Icon({ src: getEjsAsset("file"), classes: ["note"] }) })
                 item.classes.push("note")
             } else {
-                item = new MenuItem({ label: file.dir, classes: ["dir"], icon: new Icon({ src: getEjsAsset("load") }), submenu: fileStruct(file.content) })
+                item = new MenuItem({ label: file.dir, classes: ["dir"], icon: new Icon({ src: getEjsAsset("folder") }), submenu: fileStruct(file.content) })
                 item.classes.push("dir")
             }
             struct.append(item)

@@ -328,9 +328,10 @@ a {
     max-height: 1em;
     aspect-ratio: 1 / 1;
     display: inline-block;
-    filter: var(--icon-filter);
     --level: keep;
     background-color: transparent;
+    fill: var(--text-primary);
+    color: var(--text-primary);
 }
 
 .button {
