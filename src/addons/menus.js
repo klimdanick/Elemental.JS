@@ -15,14 +15,15 @@ let lastMenu;
 
 
 class Menu extends Element {
-  constructor({ type = "menu", vertical = true } = {}) {
+  constructor({ type = "menu", vertical = true, animate = true} = {}) {
     super({
       tag: "ul",
       classes: ["menu", `menu-${type}`, vertical ? "vertical" : "horizontal"]
     });
     this.type = type;
     this.open = false;
-    setTimeout(() => this.calcSize(), 500);
+    this.animate = animate;
+    if (this.animate) setTimeout(() => this.calcSize(), 500);
   }
 
   show() {
@@ -38,7 +39,7 @@ class Menu extends Element {
   }
 
   hide() {
-    this.calcSize();
+    if (this.animate) this.calcSize();
     this.parent.html.style.overflow = "hidden";
     this.open = false;
     this.closeChildren();
