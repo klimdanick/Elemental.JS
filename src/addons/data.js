@@ -78,7 +78,7 @@ class BarGraph extends Element {
     render() {
         this.clear();
 
-        const max = this.max ? Math.max(...this.values);
+        const max = this.max ? this.max : Math.max(...this.values);
 
         this.values.forEach((value, i) => {
             const bar = new Element({
