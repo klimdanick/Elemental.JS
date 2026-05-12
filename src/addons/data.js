@@ -67,17 +67,18 @@ class List extends Element {
 }
 
 class BarGraph extends Element {
-    constructor({ values = [], labels = [] } = {}) {
+    constructor({ values = [], labels = [], max } = {}) {
         super({ tag: "div", classes: ["bar-graph"] });
 
         this.values = values;
         this.labels = labels;
+        this.max = max;
     }
 
     render() {
         this.clear();
 
-        const max = Math.max(...this.values);
+        const max = this.max ? Math.max(...this.values);
 
         this.values.forEach((value, i) => {
             const bar = new Element({
