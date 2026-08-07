@@ -14,7 +14,7 @@ let ToastLayout;
 class Toast extends Element {
     constructor({ type = FEEDBACK_TYPES.info, message = "", duration = 3000}) {
         super({ tag: "toast", classes: [type.class, "feedback"]});
-        this.append(new Icon({ src:type.icon}), message);
+        this.append(/*new Icon({ src:type.icon}),*/ message); // TODO add icon support
         this.type = type;
         this.message = message;
         this.duration = duration;

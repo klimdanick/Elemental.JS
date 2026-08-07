@@ -6,7 +6,7 @@
 <script>
 
     function getFiles() {
-        let url = "https://klimdanick.nl/athleticks/files";
+        let url = "https://klimdanick.nl/Athleticks/files";
         // if (serverMode == "test");
         fetch(url)
             .then(response => {
@@ -52,26 +52,26 @@
             ));
 
         bento = new Menu({ type: "bento" }).append(
-            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/run.png" }), label: "mila" }),
-            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/jump.png" }), label: "hoog" }),
-            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/throw.png" }), label: "kogel" }),
-            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/run.png" }), label: "sprint" }),
-            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/jump.png" }), label: "ver" }),
-            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/throw.png" }), label: "balwerpen" }),
-            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/run.png" }), label: "cross" }),
-            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/jump.png" }), label: "hinkstap" }),
-            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/throw.png" }), label: "speer" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/run.png" }), label: "mila" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/jump.png" }), label: "hoog" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/throw.png" }), label: "kogel" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/run.png" }), label: "sprint" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/jump.png" }), label: "ver" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/throw.png" }), label: "balwerpen" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/run.png" }), label: "cross" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/jump.png" }), label: "hinkstap" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/throw.png" }), label: "speer" }),
         )
 
         toast = new Toast({ type: FEEDBACK_TYPES.info, message: "test message" });
         const fileMenu = new Menu({ type: "hamburger" }).append(
             new MenuItem({ label: "Home", icon: new Icon({ src: getEjsAsset("home") }), action: () => toast.show() }),
-            new MenuItem({ label: "Running", icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/run.png" }), action: () => modal.open() }),
-            new MenuItem({ label: "Jumping", icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/jump.png" }) }),
-            new MenuItem({ label: "Throwing", icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/throw.png" }) }),
+            new MenuItem({ label: "Running", icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/run.png" }), action: () => modal.open() }),
+            new MenuItem({ label: "Jumping", icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/jump.png" }) }),
+            new MenuItem({ label: "Throwing", icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/throw.png" }) }),
         );
 
-        let head = new MenuItem({ label: "thleticks", icon: new Icon({ src: "https://klimdanick.nl/athleticks/res/logo_small.png" }), submenu: fileMenu })
+        let head = new MenuItem({ label: "thleticks", icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/logo_small.png" }), submenu: fileMenu })
         head.id = "dropdownHead";
 
         let head2 = new MenuItem({ icon: new Icon({ src: getEjsAsset("menu") }), action: () => { bento.toggle() } })
@@ -96,7 +96,7 @@
     }
 
     async function buildCard(file) {
-        let url = `https://klimdanick.nl/athleticks/data/${file}.json`;
+        let url = `https://klimdanick.nl/Athleticks/data/${file}.json`;
         const response = await fetch(url);
         if (!response.ok) throw new Error("Failed to fetch files");
         const data = await response.json();
