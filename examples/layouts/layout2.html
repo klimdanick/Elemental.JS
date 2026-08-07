@@ -1,0 +1,35 @@
+<html>
+
+<head>
+    <script src="../../src/Elemental.js"></script>
+</head>
+<script>
+
+    let app, nav, side, foot;
+    OnElementalLoad = () => {
+        app =
+            Layout.grid({ id: "mainLayout" })
+
+        app.append(nav = new Navbar());
+        app.append(side = new Sidebar());
+        app.append(foot = new Footer());
+
+        // nav.append(
+        //     new Button().append(new Icon({ src: getEjsAsset("home") })),
+        //     new Button().append(new Icon({ src: getEjsAsset("messages") })),
+        //     new Button().append(new Icon({ src: getEjsAsset("search") }))
+        // )
+
+        body.append(app);
+
+        body.render();
+    }
+</script>
+<style>
+
+   
+</style>
+
+<body></body>
+
+</html>

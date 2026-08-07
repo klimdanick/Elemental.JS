@@ -1,0 +1,29 @@
+.Navbar {
+    position: absolute;
+    background-color: var(--level2);
+    width: 100%;
+    min-height: 2em;
+    top: 0;
+    left: 0;
+    border-radius: 0;
+}
+
+.Footer {
+    position: absolute;
+    background-color: var(--level2);
+    width: 100%;
+    min-height: 2em;
+    bottom: 0;
+    left: 0;
+    border-radius: 0;
+}
+
+.Sidebar {
+    position: absolute;
+    background-color: var(--level2);
+    height: 100%;
+    min-width: 2em;
+    top: 0;
+    left: 0;
+    border-radius: 0;
+}
