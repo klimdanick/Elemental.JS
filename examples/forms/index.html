@@ -1,0 +1,123 @@
+<html data-theme="light">
+
+<head>
+    <script src="../../src/Elemental.js"></script>
+</head>
+<script>
+
+    let app;
+    let form;
+    let reset, submit;
+    OnElementalLoad = () => {
+        app = Layout.row({ id: "mainLayout" });
+
+        form = new Form({
+            id: "form1", onSubmit: (data) => {
+                console.log(JSON.stringify(Object.fromEntries(data)));
+            },
+            attributes: { style: "box-shadow: var(--shadow-md);" }
+        })
+            .append(
+                new Header({ level: 1 }).append(
+                    new Icon({ src: getEjsAsset("home") }),
+                    "Form example",
+                    new Badge({ classes: ["primary"] }).append("New")
+                )
+            )
+            .append(
+                new FormGroup({
+                    icon: new Icon({ src: getEjsAsset("messages"), }),
+                    label: "Email",
+                    input: new EmailInput({
+                        id: "email",
+                        name: "email",
+                        placeholder: "email",
+                    }),
+                }),
+                new FormGroup({
+                    icon: new Icon({ src: getEjsAsset("save"), }),
+                    label: "Password",
+                    input: new PasswordInput({
+                        id: "password",
+                        name: "password",
+                        placeholder: "password"
+                    })
+                }),
+                new Divider({}),
+                new FormGroup({
+                    icon: new Icon({ src: getEjsAsset("grid"), }),
+                    label: "Checkbox",
+                    input: new Checkbox({
+                        id: "toggle1",
+                        name: "toggle1",
+                        checked: true
+                    })
+                }),
+                new FormGroup({
+                    icon: new Icon({ src: getEjsAsset("line"), }),
+                    label: "Dropdown",
+                    input: new Select({
+                        id: "select1",
+                        name: "select1",
+                        options: [{ value: 0, label: "Straight" }, { value: 1, label: "Smooth" }, { value: 2, label: "Spline" }, { value: 3, label: "Arrow" }]
+                    })
+                }),
+                new FormGroup({
+                    icon: new Icon({ src: getEjsAsset("notifications"), }),
+                    label: "Number input",
+                    input: new NumberInput({
+                        id: "number1",
+                        name: "number1",
+                    })
+                }),
+                new FormGroup({
+                    icon: new Icon({ src: getEjsAsset("copy"), }),
+                    label: "Toggle switch",
+                    input: new ToggleSwitch({
+                        id: "toggle2",
+                        name: "toggle2",
+                        checked: false
+                    })
+                }),
+                new FormGroup({
+                    icon: new Icon({ src: getEjsAsset("search"), }),
+                    label: "Slider",
+                    input: new NumberSlider({
+                        min: 0,
+                        max: 10,
+                        value: 5,
+                        name: "slider"
+                    })
+                }),
+                new FormGroup({
+                    icon: new Icon({ src: getEjsAsset("rotate_left"), }),
+                    label: "Color",
+                    input: new ColorPicker({
+                        id: "color"
+                    }),
+                }),
+            ).row({ attributes: { style: "width: 100%; justify-content: space-between;" } }).append(
+                reset = new Button({ type: "reset", classes: ["danger"] }).append(new Icon({ src: getEjsAsset("rotate_left"), }), "Reset"),
+                submit = new Button({
+                    type: "submit", classes: ["primary"], listeners: {
+                        click: (e) => {
+                            submit.setLoading(true);
+                            setTimeout(() => { submit.setLoading(false); }, 1000);
+                        }
+                    }
+                }).append(new Icon({ src: getEjsAsset("save") }), "Save")
+            ).root();
+
+        app.append(form);
+        
+        body.append(app);
+
+        body.render();
+    }
+</script>
+<style>
+</style>
+
+<body></body>
+
+</html>

@@ -1,0 +1,193 @@
+<html data-theme="light">
+
+<head>
+    <script src="../../src/Elemental.js"></script>
+</head>
+<script>
+
+    function getFiles() {
+        let url = "https://klimdanick.nl/Athleticks/files";
+        // if (serverMode == "test");
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+                return response.json();
+            })
+            .then(json => {
+                files = json.files;
+                OnElementalLoad2();
+            })
+            .catch(function () {
+                this.dataError = true;
+            })
+    }
+
+    OnElementalLoad = () => {
+        getFiles();
+    }
+
+    let app;
+    let toast, bento;
+    let cardGrid;
+    OnElementalLoad2 = () => {
+        app = Layout.column({ id: "mainLayout" });
+
+        const modal = new Modal().append(
+            Layout.column({ attributes: { style: "--level: keep" } }).append(
+                new Header({ level: 2 }).append("Delete item"),
+                "This action cannot be undone.",
+                Layout.row({ attributes: { style: "--level: keep" } }).append(
+                    new Button({ classes: ["secondary"], onClick: () => modal.close() })
+                        .append("Cancel").end(),
+                    new Button({
+                        onClick: () => {
+                            console.log("Deleted");
+                            modal.close();
+                        }
+                    })
+                        .append("Delete")
+                )
+            ));
+
+        bento = new Menu({ type: "bento" }).append(
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/run.png" }), label: "mila" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/jump.png" }), label: "hoog" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/throw.png" }), label: "kogel" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/run.png" }), label: "sprint" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/jump.png" }), label: "ver" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/throw.png" }), label: "balwerpen" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/run.png" }), label: "cross" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/jump.png" }), label: "hinkstap" }),
+            new MenuItem({ icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/throw.png" }), label: "speer" }),
+        )
+
+        toast = new Toast({ type: FEEDBACK_TYPES.info, message: "test message" });
+        const fileMenu = new Menu({ type: "hamburger" }).append(
+            new MenuItem({ label: "Home", icon: new Icon({ src: getEjsAsset("home") }), action: () => toast.show() }),
+            new MenuItem({ label: "Running", icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/run.png" }), action: () => modal.open() }),
+            new MenuItem({ label: "Jumping", icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/jump.png" }) }),
+            new MenuItem({ label: "Throwing", icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/throw.png" }) }),
+        );
+
+        let head = new MenuItem({ label: "thleticks", icon: new Icon({ src: "https://klimdanick.nl/Athleticks/res/logo_small.png" }), submenu: fileMenu })
+        head.id = "dropdownHead";
+
+        let head2 = new MenuItem({ icon: new Icon({ src: getEjsAsset("menu") }), action: () => { bento.toggle() } })
+        head2.id = "bentoHead";
+
+        cardGrid = Layout.grid({ id: "cardGrid" });
+
+        loadCards();
+        
+        app.append(head, head2, bento, cardGrid);
+
+        body.append(app);
+
+        body.render();
+    }
+
+    function loadCards() {
+        // cardGrid.clear();
+        for (let i = 0; i < files.length; i++) {
+            buildCard(files[i]);
+        }
+    }
+
+    async function buildCard(file) {
+        let url = `https://klimdanick.nl/Athleticks/data/${file}.json`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Failed to fetch files");
+        const data = await response.json();
+
+        let imgEl = new ImageEl({ src:data.preview });
+
+
+        // const filename = vid.substring(vid.lastIndexOf('/') + 1);
+        // const nameWithoutExt = filename.split('.').slice(0, -1).join('.').replaceAll("_", " ");
+
+        let card = new Card()
+            .append(
+                imgEl,
+                new Header({level:3}).append(data.name),
+            );
+
+        cardGrid.append(card);
+    }
+</script>
+<style>
+
+    .card {
+        max-width: 350px;
+        width: 600px;
+    }
+
+    .card .image {
+        width: 350px;
+        border-radius: var(--radius-md);
+        aspect-ratio: 16/9;
+        object-fit: cover;
+    }
+
+    #mainLayout>.menu-item,
+    #mainLayout>.menu {
+        box-shadow: var(--shadow-lg);
+    }
+
+    #bentoHead {
+        position: absolute;
+        top: 1em;
+        right: 1em;
+        --level: increment;
+    }
+
+    .menu-bento {
+        grid-template-columns: repeat(3, 1fr) !important;
+        position: absolute;
+        top: 3em;
+        right: 1em;
+        max-height: 12em !important;
+    }
+
+    .menu-bento.open {
+        max-width: 12em !important;
+        max-height: 12em !important;
+    }
+
+    #dropdownHead {
+        position: absolute;
+        left: 1em;
+        top: 1em;
+        --level: increment;
+    }
+
+    #dropdownHead>.menu-button {
+        font-weight: bold;
+    }
+
+    #dropdownHead>.menu-button>.icon {
+        transition: margin-right var(--duration-slow) ease-in-out;
+    }
+
+    #dropdownHead:has(> .menu:first-of-type.open)>.menu-button>.icon {
+        margin-right: -3px;
+    }
+
+    #dropdownHead>ul {
+        --level: keep;
+    }
+
+    #cardGrid {
+        --level: keep;
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    #cardGrid * {
+        --level: increment;
+    }
+</style>
+
+<body></body>
+
+</html>

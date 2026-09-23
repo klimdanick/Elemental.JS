@@ -1,0 +1,38 @@
+<html data-theme="light">
+
+<head>
+    <script src="../../src/Elemental.js"></script>
+</head>
+<script>
+    let app;
+    OnElementalLoad = () => {
+        app = Layout.column({ id: "mainLayout" });
+
+        let dropdown = fileStruct();
+
+        app.append(dropdown);
+        body.append(app)
+        body.render();
+    }
+
+
+    let allFiles = ["arrow", "code", "copy", "delete", "file", "folder", "grid", "home", "line", "load", "mark", "menu", "messages", "notifications", "rotate_left", "rotate_right", "screenshot", "search", "text"]
+
+    const fileStruct = (files = allFiles) => {
+        let struct = new Menu({ type: "dropdown", animate: false})
+
+        files.forEach(file => {
+            let item = new MenuItem({ label: file, icon: new Icon({ src: getEjsAsset(file)}) })
+            struct.append(item)
+        })
+
+        return struct;
+    } 
+</script>
+<style>
+    #mainLayout {
+        justify-content: flex-start;
+        font-size: 1.2em;
+    }
+</style>
+</html>

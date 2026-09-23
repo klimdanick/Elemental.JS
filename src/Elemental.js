@@ -1,10 +1,7 @@
 let loadedScripts = [];
 let loadedStyles = [];
 
-let elementalJSloaded = false;
-
-let mainLayout;
-let toastPanel;
+let loadedHtml = {};
 
 const root = document.querySelector(':root');
 let CINDER_BLACK;
@@ -18,16 +15,14 @@ let STRAWBERRY_MAGENTA;
 let level0;
 let level1;
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-function isDOM(Obj) {
-    return Obj instanceof Element;
-}
-
 const stringToHTML = string => new DOMParser().parseFromString(string, 'text/html').body.firstChild
+const stringToSVG = string => new DOMParser().parseFromString(string, 'image/svg+xml').documentElement
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function AttachScript(src) {
     if (loadedScripts.includes(src)) return;
+    loadedScripts.push(src);
     var script = document.createElement("script");
     script.type = "text/javascript";
     document.getElementsByTagName("head")[0].appendChild(script);
@@ -43,20 +38,17 @@ function AttachStyle(src) {
     style.href = src;
 }
 
-const getEjsAsset = (name) => `https://klimdanick.nl/elementaljs/assets/${name}.png`;
+const defaultLibURL = document.currentScript.src.toLowerCase().replace(/src\/elemental.js/, "")
+console.log(defaultLibURL)
 
-let OnElementalLoad;
-let Interval;
+const getEjsAsset = (name, type = "svg", libURL = defaultLibURL) => `${defaultLibURL}/assets/${type}/${name}.${type}`;
 
-AttachScript("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js");
-AttachStyle("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css");
-AttachStyle("https://klimdanick.nl/elementaljs/styles/default.css");
+let OnElementalLoad = () => { };
+const reloadElemental = () => { console.log("reload!"); };
 
-window.onpageshow = () => {
-    setTimeout(() => { document.documentElement.classList.add('loaded'); }, 500);
-}
+let body;
 
-window.onload = () => {
+window.addEventListener("load", (event) => {
     CINDER_BLACK = getComputedStyle(root).getPropertyValue('--CINDER_BLACK');
     BLACK_PEARL = getComputedStyle(root).getPropertyValue('--BLACK_PEARL');
     DEBIAN_RED = getComputedStyle(root).getPropertyValue('--DEBIAN_RED');
@@ -68,939 +60,606 @@ window.onload = () => {
     level0 = getComputedStyle(root).getPropertyValue('--level0');
     level1 = getComputedStyle(root).getPropertyValue('--level1');
 
+    body = new BodyElement();
+
     OnElementalLoad();
-    hljs.highlightAll();
+    reloadElemental();
+});
 
-    toastPanel = new Layout("column-reverse");
-    toastPanel.htmlEl.id = "toastPanel";
-    if (mainLayout) mainLayout.appendChild(toastPanel);
 
-    elementalJSloaded = true;
-
-    let taostPanelInterval = setInterval(() => {
-        if (mainLayout && !mainLayout.htmlEl.contains(toastPanel.htmlEl)) {
-            if (mainLayout) mainLayout.appendChild(toastPanel);
-        }
-    }, 1000);
-
-    /*
-    let animationFix = (el) => {
-        let tmp = el.style.transitionDuration;
-        el.style.transitionDuration = "0s";
-        console.log(el.style);
-        setTimeout(() => {el.style.transitionDuration = "200ms";}, 5000)
-    }
-    document.querySelectorAll("element").forEach(animationFix);
-    document.querySelectorAll("layoput").forEach(animationFix);
-    */
+function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
 }
 
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme) setTheme(savedTheme);
+
+function toggleTheme() {
+    const current = root.getAttribute("data-theme") || "dark";
+    setTheme(current === "dark" ? "light" : "dark");
+}
+
+function loadAddon(addon) {
+    AttachScript(addon);
+}
+
+loadAddon(`${defaultLibURL}/src/addons/forms.js`)
+loadAddon(`${defaultLibURL}/src/addons/layouts.js`)
+loadAddon(`${defaultLibURL}/src/addons/menus.js`)
+loadAddon(`${defaultLibURL}/src/addons/feedback.js`)
+loadAddon(`${defaultLibURL}/src/addons/data.js`)
+
+class Addon {
+    constructor({ jsFiles = [], cssFiles = [], htmlFiles = [] }) {
+        this.jsFiles = jsFiles;
+        this.cssFiles = cssFiles;
+        this.htmlFiles = htmlFiles;
+        this.register();
+    }
+
+    register() {
+        this.jsFiles.forEach(file => {
+            AttachScript(file);
+        })
+
+        this.cssFiles.forEach(file => {
+            AttachStyle(file);
+        })
+    }
+}
+
+const CoreAddon = new Addon({
+    cssFiles: [`${defaultLibURL}/src/Elemental.css`]
+})
+
 class Element {
-    constructor(tagName = "Element") {
-        this.htmlEl = document.createElement(tagName);
-        this.style = this.htmlEl.style;
-        this.htmlEl.addEventListener("click", (e) => this.onClick(e));
-        this.htmlEl.addEventListener("mouseenter", (e) => this.onHover(e));
-        this.htmlEl.addEventListener("mouseleave", (e) => this.onLeave(e));
+    constructor({ tag = "Element", id = "", classes = [], attributes = {}, listeners = {} }) {
+        this.tag = tag;
+        this.id = id;
+        this.classes = classes;
+        this.attributes = attributes;
+        this.listeners = listeners;
+        this.children = [];
+        this.parent = null;
+        this.level = 0;
+        this.useLevelSystem = true;
+        this.attached = false;
+
+        this.html = document.createElement(this.tag);
     }
 
-    appendChild(el) {
-        console.log();
-        if (el instanceof Element)
-            this.htmlEl.appendChild(el.htmlEl);
-        if (el instanceof Node)
-            this.htmlEl.appendChild(el);
-        if (typeof el == "string")
-            this.htmlEl.innerHTML += el;
+    append(...elements) {
+        elements.flat().forEach(el => {
+            if (el instanceof Element) {
+                el.parent = this;
+            }
+            this.children.push(el)
+        });
         return this;
     }
 
-    removeChild(el) {
-        if (el instanceof Element)
-            this.htmlEl.removeChild(el.htmlEl);
+    remove(...elements) {
+        const toRemove = new Set(elements.flat());
+
+        this.children = this.children.filter(child => !toRemove.has(child));
         return this;
     }
 
-    removeAllChildren() {
-        while (this.htmlEl.firstChild) {
-            this.htmlEl.removeChild(this.htmlEl.lastChild);
+    clear() {
+        this.children = [];
+        return this;
+    }
+
+    render() {
+
+        while (this.html?.firstChild) {
+            this.html.removeChild(this.html.lastChild);
         }
+
+        this.html.id = this.id;
+
+        // Classes
+        if (Array.isArray(this.classes)) {
+            this.html.classList.add(...this.classes);
+        }
+
+        // Attributes
+        for (const [key, value] of Object.entries(this.attributes)) {
+            this.html.setAttribute(key, value);
+        }
+
+        // Event listeners
+        for (let [event, handler] of Object.entries(this.listeners)) {
+            this.html.addEventListener(event, handler);
+        }
+
+        if (!this.attached) {
+            this.parent?.html.appendChild(this.html);
+            this.attached = true;
+        }
+
+        if (this.useLevelSystem == true) {
+            let cssLevel = getComputedStyle(this.html).getPropertyValue('--level');
+            let inc = 0;
+            if (!cssLevel) inc = 1;
+            if (cssLevel == "increment") inc = 1;
+            if (cssLevel == "decrement") inc = -1;
+            this.level = this.parent?.level + (inc) || 0;
+
+            if (this.level > 10) this.level = 0;
+
+            if (cssLevel != "null")
+                this.html.classList.add(`level${this.level}`);
+
+        }
+
+        this.renderChildren();
+
+        return this;
     }
 
-    onClick(e) { }
-
-    onHover(e) { }
-
-    onLeave(e) { }
-
-    onScreen() { }
-    offScreen() { }
-
-    observe() {
-        const obs = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-				if (entry.isIntersecting) this.onScreen();
-                else this.offScreen();
-            });
+    renderChildren() {
+        this.children.flat().forEach(el => {
+            if (el instanceof Element) {
+                el.attached = false;
+                el.render();
+            } else if (el instanceof Node) {
+                this.html.appendChild(el);
+            } else if (typeof el === "string" || typeof el === "number") {
+                this.html.appendChild(document.createTextNode(el));
+            }
         });
 
-        obs.observe(this.htmlEl);
+        return this;
     }
+
+    end() {
+        return this.parent ?? this;
+    }
+
+    root() {
+        return this.parent ? this.parent.root() : this;
+    }
+}
+
+class BodyElement extends Element {
+    constructor() {
+        super("body");
+        this.html = document.body
+        this.level = -1;
+    }
+
+    render() {
+        reloadElemental();
+        this.html.innerHTML = "";
+
+        this.renderChildren();
+        this.rerender();
+    }
+
+    rerender() { }
 }
 
 class Layout extends Element {
-    constructor(direction) {
-        super("Layout");
-        if (direction == "grid") {
-            this.htmlEl.classList.add("grid");
-        } else {
-            this.htmlEl.style.flexDirection = direction;
-        }
-        //this.htmlEl.style.height = "100%";
+
+    constructor({ tag = "Layout", id = "", classes = [], attributes = {}, listeners = {} } = {}) {
+        super({ tag, id, classes: ["layout", ...classes], attributes, listeners });
     }
 
-    setGrid(options = {}) {
-        this.htmlEl.style.display = "grid";
-        if (options.columns) this.htmlEl.style.gridTemplateColumns = options.columns;
-        if (options.rows) this.htmlEl.style.gridTemplateRows = options.rows;
-        if (options.gap) this.htmlEl.style.gap = options.gap;
-        if (options.align) this.htmlEl.style.alignItems = options.align;
-        if (options.justify) this.htmlEl.style.justifyItems = options.justify;
-        return this;
+    /* ---------- Root creators ---------- */
+
+    static container(options = {}) {
+        return new Layout({
+            ...options,
+            classes: ["container", ...(options.classes || [])]
+        });
     }
 
-    setAsMain() {
-        let body = document.getElementsByTagName("body")[0]
-        this.appendChild(body.innerHTML);
-        body.innerHTML = "";
-        body.appendChild(this.htmlEl);
-        this.htmlEl.style.height = "100%";
-        mainLayout = this;
-        return this;
+    static row(options = {}) {
+        return new Layout({
+            ...options,
+            classes: ["row", ...(options.classes || [])]
+        });
     }
-}
 
-
-
-
-
-const simpleLayout = (direction = "column") => {
-    let el = document.createElement("div");
-    el.classList.add("elemental");
-    el.classList.add("layout");
-    if (direction == "grid") {
-        el.classList.add("grid");
-    } else {
-        el.style.flexDirection = direction;
+    static column(options = {}) {
+        return new Layout({
+            ...options,
+            classes: ["column", ...(options.classes || [])]
+        });
     }
-    return el;
-}
 
-const sideAndTopBarLayout = () => {
-    let background = document.createElement("div");
-    background.classList.add("fill");
-    background.style.backgroundColor = "var(--level0)";
-    document.getElementsByTagName("body")[0].appendChild(background);
-    let topbar = simpleLayout(direction = "row");
-    topbar.classList.add("topbar");
-    document.getElementsByTagName("body")[0].appendChild(topbar);
-    let sidebar = simpleLayout();
-    sidebar.classList.add("sidebar");
-    document.getElementsByTagName("body")[0].appendChild(sidebar);
-    let layout = simpleLayout();
-    layout.classList.add("fill");
-    layout.classList.add("sideAndTopBarLayoutMain");
-    document.getElementsByTagName("body")[0].appendChild(layout);
-
-    return { sidebar, topbar, content: layout };
-}
-
-class Card extends Element {
-    constructor(width, height) {
-        super();
-        this.htmlEl.classList.add("card");
-        if (width) this.htmlEl.style.width = "" + width;
-        if (height) this.htmlEl.style.height = "" + height;
+    static grid(options = {}) {
+        return new Layout({
+            ...options,
+            classes: ["grid", ...(options.classes || [])]
+        });
     }
-}
-class Title extends Element {
-    constructor(content) {
-        super("h1");
-        this.htmlEl.classList.add("title");
-        this.htmlEl.innerText = content;
-    }
-}
 
-class Text extends Element {
-    constructor(content) {
-        super("p");
-        this.htmlEl.classList.add("text");
-        this.htmlEl.innerText = content;
+    /* ---------- Hybrid nested helpers ---------- */
+
+    container(options = {}, fn) {
+        const el = Layout.container(options);
+        this.append(el);
+        if (fn) fn(el);
+        return el;
     }
-}
-class Button extends Element {
-    constructor(label, callback) {
-        super("div");
-        if (typeof (label) == "string") this.htmlEl.innerText = label;
-        else if (isDOM(label)) this.htmlEl.appendChild(label);
-        this.htmlEl.classList.add("elemental");
-        this.htmlEl.classList.add("button");
-        this.htmlEl.onclick = callback;
+
+    row(options = {}, fn) {
+        const el = Layout.row(options);
+        this.append(el);
+        if (fn) fn(el);
+        return el;
+    }
+
+    column(options = {}, fn) {
+        const el = Layout.column(options);
+        this.append(el);
+        if (fn) fn(el);
+        return el;
+    }
+
+    grid(options = {}, fn) {
+        const el = Layout.grid(options);
+        this.append(el);
+        if (fn) fn(el);
+        return el;
     }
 }
 
 class ImageEl extends Element {
-    constructor() {
-        super();
-        this.htmlEl.classList.add("image");
-        this.image = document.createElement("img");
-        this.htmlEl.appendChild(this.image);
-
-        let that = this;
-        this.preload = new Image;
-        this.preload.onload = function () {
-            that.image.src = this.src;
-
-            if (that.full) {
-                if (!that.height) {
-                    that.image.width = that.htmlEl.offsetWidth;
-                    let aspRatio = this.height / this.width;
-                    that.htmlEl.style.height = Math.floor(that.htmlEl.offsetWidth * aspRatio) + "px";
-                }
-                if (!that.width) {
-                    that.image.height = that.htmlEl.offsetHeight;
-                    let aspRatio = this.width / this.height;
-                    that.htmlEl.style.width = Math.floor(that.htmlEl.offsetHeight * aspRatio) + "px";
-                }
-            } else {
-                that.image.style.height = that.htmlEl.offsetHeight;
-                that.image.style.width = that.htmlEl.offsetWidth;
-            }
+    constructor({
+        src,
+        alt = "",
+        id = "",
+        classes = [],
+        attributes = {},
+        listeners = {},
+        lazy = true
+    }) {
+        if (!src) {
+            throw new Error("Image element requires a `src`");
         }
-    }
 
-    size({ width, height, full = true }) {
-        setTimeout(() => {
-            if (!width && !height) {
-                width = "100%;";
-                this.htmlEl.width = width;
-            }
-            if (width) this.image.style.widh = width;
-            if (height) this.image.style.height = height;
-            setTimeout(() => {
-                if (width && !height) {
-                    this.htmlEl.style.width = width;
-                    this.htmlEl.style.height = Math.floor(this.htmlEl.offsetWidth * (3 / 4)) + "px";
-                }
-                if (!width && height) {
-                    this.htmlEl.style.height = height;
-                    this.htmlEl.style.width = Math.min(Math.floor(this.htmlEl.offsetHeight * (4 / 3)) + "px", this.htmlEl.offsetWidth);
-                }
-                if (width && height) {
-                    this.htmlEl.style.width = width;
-                    this.htmlEl.style.height = height;
-                }
-                this.widh = width;
-                this.height = height;
-                this.full = full;
-            }, 2);
-        }, 2);
-        return this;
-    }
+        super({
+            tag: "img",
+            id,
+            classes: ["image", ...classes],
+            attributes: {
+                src,
+                alt,
+                ...(lazy ? { loading: "lazy" } : {}),
+                ...attributes
+            },
+            listeners
+        });
 
-    load(src = "") {
-        setTimeout(() => { this.preload.src = src; }, 5);
-        return this;
+        this.useLevelSystem = false;
     }
 }
 
-class VideoEl extends Element {
-    constructor() {
-        super();
-        this.htmlEl.classList.add("video");
+class PngIcon extends ImageEl {
+    constructor({
+        src,
+        alt = "",
+        id = "",
+        classes = [],
+        attributes = {},
+        listeners = {},
+        lazy = true
+    }) {
+        super({
+            src,
+            alt,
+            id,
+            classes: ["icon", ...classes],
+            attributes,
+            listeners,
+            lazy
+        });
+    }
+}
 
-        // Create <video> element
-        this.video = document.createElement("video");
-        this.video.setAttribute("playsinline", ""); // mobile safe
-        this.video.setAttribute("preload", "auto");
-        this.video.setAttribute("controls", "");   // show controls by default
-        this.htmlEl.appendChild(this.video);
+class Icon extends Element {
+    constructor({
+        src,
+        alt = "",
+        id = "",
+        classes = [],
+        attributes = {},
+        listeners = {},
+    }) {
+        super({
+            src,
+            alt,
+            id,
+            classes: ["icon", ...classes],
+            attributes,
+            listeners,
+            tag: "svg",
+        });
 
-        this.full = true;
-        this.width = null;
-        this.height = null;
+        this.loadSVG(src);
 
-        // Preloader (we preload metadata instead of full video)
-        this.preload = document.createElement("video");
-        this.preload.preload = "metadata";
-
-        this.preload.onloadedmetadata = () => {
-            if (this.full) {
-                if (!this.height) {
-                    this.video.width = this.htmlEl.offsetWidth;
-                    let aspRatio = this.preload.videoHeight / this.preload.videoWidth;
-                    this.htmlEl.style.height = Math.floor(this.htmlEl.offsetWidth * aspRatio) + "px";
-                }
-                if (!this.width) {
-                    this.video.height = this.htmlEl.offsetHeight;
-                    let aspRatio = this.preload.videoWidth / this.preload.videoHeight;
-                    this.htmlEl.style.width = Math.floor(this.htmlEl.offsetHeight * aspRatio) + "px";
-                }
-            } else {
-                this.video.style.height = this.htmlEl.offsetHeight + "px";
-                this.video.style.width = this.htmlEl.offsetWidth + "px";
-            }
-
-            // Once metadata is loaded, set src
-            this.video.src = this.preload.src;
-        };
     }
 
-    size({ width, height, full = true }) {
-        setTimeout(() => {
-            if (!width && !height) {
-                width = "100%";
-                this.htmlEl.style.width = width;
+    async loadSVG(url) {
+        try {
+            if (!loadedHtml[url]) {
+                loadedHtml[url] = fetch(url)
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error(`Failed to load ${url}: ${res.status}`);
+                        }
+                        return res.text();
+                    });
             }
-            if (width) this.video.style.width = width;
-            if (height) this.video.style.height = height;
 
-            setTimeout(() => {
-                if (width && !height) {
-                    this.htmlEl.style.width = width;
-                    this.htmlEl.style.height = Math.floor(this.htmlEl.offsetWidth * (9 / 16)) + "px";
-                }
-                if (!width && height) {
-                    this.htmlEl.style.height = height;
-                    this.htmlEl.style.width = Math.min(Math.floor(this.htmlEl.offsetHeight * (16 / 9)) + "px", this.htmlEl.offsetWidth);
-                }
-                if (width && height) {
-                    this.htmlEl.style.width = width;
-                    this.htmlEl.style.height = height;
-                }
+            const htmlText = await loadedHtml[url];
 
-                this.width = width;
-                this.height = height;
-                this.full = full;
-            }, 2);
-        }, 2);
+            let DOM = stringToSVG(htmlText);
+
+            this.html = DOM;
+
+            this.html.classList.add("icon");
+
+            this.end().render();
+
+        } catch (err) {
+            console.error(err);
+            this.html.innerHTML = `<div style="color:red;">Error loading content</div>`;
+        }
 
         return this;
     }
 
-    load(src = "", autoplay = false, loop = false) {
-        setTimeout(() => {
-            this.preload.src = src;
-            this.video.autoplay = autoplay;
-            this.video.loop = loop;
-        }, 5);
+    render() {
+
+        this.html.id = this.id;
+
+        // Classes
+        if (Array.isArray(this.classes)) {
+            this.html.classList.add(...this.classes);
+        }
+
+        // Attributes
+        for (const [key, value] of Object.entries(this.attributes)) {
+            this.html.setAttribute(key, value);
+        }
+
+        // Event listeners
+        for (let [event, handler] of Object.entries(this.listeners)) {
+            this.html.addEventListener(event, handler);
+        }
+
+        if (!this.attached) {
+            this.parent?.html.appendChild(this.html);
+            this.attached = true;
+        }
+
         return this;
     }
 }
 
+class Header extends Element {
+    constructor({
+        level = 1,
+        id = "",
+        classes = [],
+        attributes = {},
+        listeners = {},
+    }) {
+        super({
+            tag: "h" + level,
+            id,
+            classes,
+            attributes,
+            listeners
+        });
+        this.useLevelSystem = false;
+    }
+}
 
-class SimpleMenu extends Element {
-    constructor(dir = "column", stick) {
-        super();
-        this.htmlEl.classList.add("menu");
-        this.htmlEl.classList.add(dir);
-        this.items = [];
-        if (stick == "left") {
-            this.style.marginRight = "auto";
-        }
-        if (stick == "right") {
-            this.style.marginLeft = "auto";
-        }
+class Button extends Element {
+    constructor({
+        type = "button",
+        id = "",
+        classes = [],
+        attributes = {},
+        listeners = {},
+        onClick = (e) => { }
+    } = {}) {
+        super({
+            tag: "button",
+            id,
+            classes: ["button", "formEl", ...classes],
+            attributes: {
+                type,
+                ...attributes
+            },
+            listeners
+        });
+
+        this.disabled = false;
+
+        this.onClick = onClick;
     }
 
-    addHead(el) {
-        if (typeof el == "string") el = stringToHTML(el)
-        this.head = el;
-        if (el instanceof Element) el = el.htmlEl;
-        el.classList.add("menuHead");
-        this.appendChild(el);
-    }
-
-    appendChild(el) {
-        if (el instanceof SimpleMenuItem || el instanceof TextInputMenuItem) {
-            this.htmlEl.appendChild(el.htmlEl);
-            this.items.push(el);
-            el.menu = this;
-        } if (el instanceof HTMLElement) {
-            this.htmlEl.appendChild(el);
-            this.items.push(el);
-            el.menu = this;
-        } if (typeof el == "string")
-            this.htmlEl.innerHTML += el;
+    disable(val = true) {
+        this.disabled = val;
         return this;
     }
 
-    appendChildren(el) {
-        for (let i = 0; i < el.length; i++) {
-            this.appendChild(el[i]);
-        }
+    render() {
+        super.render();
+        this.html.disabled = this.disabled;
+        this.html.addEventListener("click", this.onClick);
     }
 
-    select(el, exec = true) {
-        for (let i = 0; i < this.items.length; i++) {
-            let e = this.items[i];
-            if (e instanceof SimpleMenuItem) e.htmlEl.classList.remove("selected");
-            if (e instanceof HTMLElement) e.classList.remove("selected");
-        }
-        if (el instanceof SimpleMenuItem) {
-            el.htmlEl.classList.add("selected");
-            this.selected = el;
-            if (exec) {
-                let inter = setInterval(() => {
-                    if (elementalJSloaded) {
-                        el.callback();
-                        clearInterval(inter);
-                    }
-                }, 10)
+    setLoading(isLoading = true) {
+        this.disable(isLoading);
+        if (!this.classes.includes("loading")) this.classes.push("loading");
+        else {
+            const index = this.classes.indexOf("loading");
+            if (index > -1) { // only splice array when item is found
+                this.classes.splice(index, 1); // 2nd parameter means remove one item only
             }
         }
-        if (el instanceof HTMLElement) {
-            el.classList.add("selected");
-            this.selected = el;
-        }
+        this.html?.classList.toggle("loading", isLoading);
+        return this;
+    }
+
+    bindShortcut(key = "Enter") {
+        document.addEventListener("keydown", e => {
+            if (e.key === key) this.html.click();
+        });
+        return this;
+    }
+
+}
+
+class Card extends Element {
+    constructor({
+        id = "",
+        classes = [],
+        attributes = {},
+        listeners = {},
+    } = {}) {
+        super({
+            tag: "div",
+            id,
+            classes: ["card", ...classes],
+            attributes,
+            listeners,
+        });
     }
 }
 
-class DropDownMenu extends SimpleMenu {
-    constructor(dir = "column", stick) {
-        super(dir, stick);
-        this.htmlEl.classList.add("DropDownMenu")
-        setTimeout(() => {
-            this.htmlEl.style.maxHeight = this.htmlEl.offsetHeight;
-            setTimeout(() => {
-                this.open = false;
-                this.htmlEl.classList.add("closed")
-            }, 2);
-        }, 2);
-    }
-
-    addHead(el) {
-        super.addHead(el);
-        let that = this;
-        this.head.onclick = () => {
-            that.open = !that.open;
-            that.htmlEl.classList.toggle("closed")
-        }
+class Badge extends Element {
+    constructor({
+        id = "",
+        classes = [],
+        attributes = {}
+    } = {}) {
+        super({
+            tag: "span",
+            id,
+            classes: ["badge", ...classes],
+            attributes
+        });
     }
 }
 
-class HamburgerMenu extends SimpleMenu {
-    constructor(dir = "column", stick) {
-        super(dir, stick);
-        this.htmlEl.classList.add("HamburgerMenu")
-        setTimeout(() => {
-            // this.width = this.htmlEl.offsetWidth;
-            // this.htmlEl.style.maxWidth = this.htmlEl.offsetWidth;
-            setTimeout(() => {
-                this.open = false;
-                this.htmlEl.classList.add("closed")
-            }, 2);
-        }, 2);
-    }
-
-    addHead(el) {
-        super.addHead(new HeadMenuItem("https://klimdanick.nl/elementaljs/assets/menu.png", el, () => {
-            that.open = !that.open;
-            that.htmlEl.classList.toggle("closed")
-        }));
-        let that = this;
-        this.head.onclick = () => {
-            that.open = !that.open;
-            that.htmlEl.classList.toggle("closed")
-        }
-    }
-}
-
-class TabMenu extends HamburgerMenu {
-    constructor(dir = "column", stick) {
-        super(dir, stick);
-        this.htmlEl.classList.add("closed");
-    }
-
-    addHead(el) { }
-}
-
-
-
-class SimpleMenuItem extends Button {
-    constructor(icon = "menu.png", label = "", callback = () => { }) {
-        super("", () => { let cancel = callback(); if (!cancel) this.menu.select(this, false);});
-        this.callback = callback;
-        this.htmlEl.classList.add("MenuItem");
-        this.icon = document.createElement("img");
-        // this.htmlEl.appendChild(this.icon)
-        this.appendChild(label)
-
-        let that = this;
-        this.preload = new Image;
-        this.preload.onload = function () {
-            that.icon.src = this.src;
-            that.htmlEl.innerHTML = "";
-            that.htmlEl.appendChild(that.icon)
-            that.appendChild(label)
-        }
-        this.preload.src = icon;
-    }
-}
-
-class TextInputMenuItem extends Element {
-    constructor(id, icon = "menu.png", placeholder = "") {
-        super("div");
-        this.htmlEl.classList.add("MenuItem");
-        this.htmlEl.classList.add("elemental");
-        this.htmlEl.classList.add("button");
-        this.htmlEl.classList.add("textInputMenuItem");
-
-        // Create DOM elements
-        this.icon = document.createElement("img");
-        this.inputField = document.createElement("input");
-        this.inputField.type = "search";
-        this.inputField.placeholder = placeholder;
-        this.inputField.id = id;
-
-        // Preload icon image
-        const preload = new Image();
-        preload.onload = () => {
-            this.icon.src = preload.src;
-        };
-        preload.src = icon;
-
-        // Append elements (even before preload)
-        this.htmlEl.appendChild(this.icon);
-        this.htmlEl.appendChild(this.inputField);
-
-        let that = this;
-        this.icon.onclick = () => {
-            this.onsearch(that.inputField.value);
-        }
-    }
-
-    onsearch(value) { }
-}
-
-class InputMenuItem extends Element {
-    constructor(icon = "menu.png", {id, placeholder = "", value = "", type = "text"}) {
-        super("div");
-        this.htmlEl.classList.add("MenuItem");
-        this.htmlEl.classList.add("elemental");
-        this.htmlEl.classList.add("button");
-        this.htmlEl.classList.add("textInputMenuItem");
-
-        // Create DOM elements
-        this.icon = document.createElement("img");
-        this.inputField = document.createElement("input");
-        this.inputField.type = type;
-        this.inputField.placeholder = placeholder;
-        this.inputField.id = id;
-        this.inputField.value = value;
-
-        // Preload icon image
-        const preload = new Image();
-        preload.onload = () => {
-            this.icon.src = preload.src;
-        };
-        preload.src = icon;
-
-        // Append elements (even before preload)
-        this.htmlEl.appendChild(this.icon);
-        this.htmlEl.appendChild(this.inputField);
-
-        let that = this;
-        this.icon.onclick = () => {
-            this.onsearch(that.inputField.value);
-        }
-    }
-
-    onsearch(value) { }
-}
-
-class TabMenuItem extends SimpleMenuItem {
-    constructor(icon = "menu.png", callback = () => { }) {
-        super(icon, "", callback);
-    }
-}
-
-class HeadMenuItem extends Button {
-    constructor(icon = "menu.png", label = "", callback = () => { }) {
-        super("", callback);
-        this.htmlEl.classList.add("MenuItem");
-        this.icon = document.createElement("img");
-        // this.htmlEl.appendChild(this.icon)
-        this.appendChild(label)
-
-        let that = this;
-        this.preload = new Image;
-        this.preload.onload = function () {
-            that.icon.src = this.src;
-            that.htmlEl.innerHTML = "";
-            that.htmlEl.appendChild(that.icon)
-            that.appendChild(label)
-        }
-        this.preload.src = icon;
-    }
-}
-
-class Input extends Element {
-    constructor(type = "text") {
-        super("input");
-        this.htmlEl.type = type;
-    }
-}
-
-class ColorPicker extends Element {
-    constructor() {
-        super();
-        let rowLayout = new Layout("row");
-        let colLayout = new Layout("column");
-        rowLayout.style.background = "none";
-        colLayout.style.background = "none";
-
-        rowLayout.appendChild(colLayout);
-        this.htmlEl.classList.add("ColorPicker");
-
-        this.huePicker = new HuePicker();
-        this.saturationPicker = new SaturationPicker();
-        this.lightnessPicker = new LightnessPicker();
-
-        this.huePicker.linkedColorPicker = this;
-        this.saturationPicker.linkedColorPicker = this;
-        this.lightnessPicker.linkedColorPicker = this;
-
-        colLayout.appendChild(this.huePicker);
-        colLayout.appendChild(this.saturationPicker);
-        rowLayout.appendChild(this.lightnessPicker);
-
-        this.appendChild(rowLayout);
-        this.onPick_();
-    }
-
-    onPick_() {
-        let h = this.huePicker.hue;
-        let s = this.saturationPicker.saturation;
-        let l = this.lightnessPicker.lightness;
-        this.color = buildColor(h, s, l);
-        this.saturationPicker.updateHue(this.color.h);
-        this.lightnessPicker.updateHue(this.color.h);
-        this.onPick(this.color);
-    }
-
-    onPick(color) { }
-}
-
-function buildColor(h, s, l) {
-    let rgb = hslToRgb(h, s, l);
-    let hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-    return { h: h, s: s, l: l, r: rgb.r, g: rgb.g, b: rgb.b, hex };
-}
-
-function rgbToHex(r, g, b) {
-    return (
-        "#" +
-        [r, g, b]
-            .map(x => {
-                const hex = x.toString(16);
-                return hex.length === 1 ? "0" + hex : hex; // pad with 0 if needed
-            })
-            .join("")
-    );
-}
-
-function hslToRgb(h, s, l) {
-    // h: hue [0–360], s: saturation [0–100], l: lightness [0–100]
-    s /= 100;
-    l /= 100;
-
-    const c = (1 - Math.abs(2 * l - 1)) * s; // chroma
-    const x = c * (1 - Math.abs((h / 60) % 2 - 1));
-    const m = l - c / 2;
-
-    let r = 0, g = 0, b = 0;
-
-    if (0 <= h && h < 60) {
-        r = c; g = x; b = 0;
-    } else if (60 <= h && h < 120) {
-        r = x; g = c; b = 0;
-    } else if (120 <= h && h < 180) {
-        r = 0; g = c; b = x;
-    } else if (180 <= h && h < 240) {
-        r = 0; g = x; b = c;
-    } else if (240 <= h && h < 300) {
-        r = x; g = 0; b = c;
-    } else if (300 <= h && h < 360) {
-        r = c; g = 0; b = x;
-    }
-
-    r = Math.round((r + m) * 255);
-    g = Math.round((g + m) * 255);
-    b = Math.round((b + m) * 255);
-
-    return { r, g, b };
-}
-
-function rgbToHsl(r, g, b) {
-    // r,g,b in [0–255]
-    r /= 255;
-    g /= 255;
-    b /= 255;
-
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const delta = max - min;
-
-    let h = 0, s = 0, l = (max + min) / 2;
-
-    if (delta !== 0) {
-        if (max === r) {
-            h = ((g - b) / delta) % 6;
-        } else if (max === g) {
-            h = (b - r) / delta + 2;
-        } else {
-            h = (r - g) / delta + 4;
-        }
-
-        h *= 60;
-        if (h < 0) h += 360;
-
-        s = delta / (1 - Math.abs(2 * l - 1));
-    }
-
-    return {
-        h: Math.round(h),
-        s: Math.round(s * 100),
-        l: Math.round(l * 100)
-    };
-}
-
-
-
-class HuePicker extends Element {
-    constructor() {
-        super();
-        this.htmlEl.classList.add("HuePicker");
-        this.pointer = new Element();
-        this.pointer.htmlEl.classList.add("pointer");
-        this.appendChild(this.pointer);
-        this.htmlEl.addEventListener("click", this.onClick);
-        this.hue = 343;
-        this.rgb = DEBIAN_RED;
-    }
-
-    onClick(e) {
-        if (!this.htmlEl) return;
-        const rect = this.htmlEl.getBoundingClientRect(); // div's position & size
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const dx = x - cx;
-        const dy = y - cy;
-
-        // angle in degrees
-        let angleDeg = Math.atan2(dy, dx) * (180 / Math.PI);
-        if (angleDeg < 0) angleDeg += 360;
-
-        // rotate the pointer
-        this.pointer.style.transform = `rotate(${angleDeg}deg)`;
-
-        let rgb = this.getColor(x, y);
-        let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
-        this.hue = hsl.h;
-        this.color = buildColor(hsl.h, hsl.s, hsl.l);
-
-        if (this.linkedColorPicker) {
-            this.linkedColorPicker.onPick_();
-        }
-
-        this.onPick(this.hue);
-    }
-
-    onPick(hue) { }
-
-    getColor(x, y) {
-        const size = this.htmlEl.offsetWidth;
-        const canvas = document.createElement("canvas");
-        canvas.width = size;
-        canvas.height = size;
-        // this.htmlEl.appendChild(canvas);
-        const ctx = canvas.getContext("2d");
-
-        // Build a conic gradient on canvas
-        const gradient = ctx.createConicGradient(0, size / 2, size / 2);
-        gradient.addColorStop(0 / 5, DEBIAN_RED);
-        gradient.addColorStop(1 / 5, TURMERIC_YELLOW);
-        gradient.addColorStop(2 / 5, AQUA_GREEN);
-        gradient.addColorStop(3 / 5, CURIOS_BLUE);
-        gradient.addColorStop(4 / 5, STRAWBERRY_MAGENTA);
-        gradient.addColorStop(1, DEBIAN_RED);
-
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, size, size);
-
-        return ctx.getImageData(x, y, 1, 1).data;
-    }
-}
-
-class SaturationPicker extends Element {
-    constructor() {
-        super();
-        this.htmlEl.classList.add("SatPicker");
-        this.pointer = new Element();
-        this.pointer.htmlEl.classList.add("pointer");
-        this.appendChild(this.pointer);
-        this.htmlEl.addEventListener("click", this.onClick);
-        this.saturation = 88;
-    }
-
-    onClick(e) {
-        if (!this.htmlEl) return;
-        const rect = this.htmlEl.getBoundingClientRect(); // div's position & size
-        const x = e.clientX - rect.left;
-        const p = x / rect.width;
-
-        this.saturation = Math.round(p * 100);
-
-        if (this.linkedColorPicker) {
-            this.linkedColorPicker.onPick_();
-        }
-
-        this.pointer.style.left = `${this.saturation}%`;
-        this.linkedColorPicker.onPick_();
-        this.onPick(this.saturation);
-    }
-
-    onPick(saturation) { }
-
-    updateHue(hue) {
-        this.style.background = `linear-gradient(to right, hsl(${hue}, 0%, 50%), hsl(${hue}, 100%, 50%))`;
-    }
-}
-
-class LightnessPicker extends Element {
-    constructor() {
-        super();
-        this.htmlEl.classList.add("LigPicker");
-        this.pointer = new Element();
-        this.pointer.htmlEl.classList.add("pointer");
-        this.appendChild(this.pointer);
-        this.htmlEl.addEventListener("click", this.onClick);
-        this.lightness = 45;
-    }
-
-    onClick(e) {
-        if (!this.htmlEl) return;
-        const rect = this.htmlEl.getBoundingClientRect(); // div's position & size
-        const y = e.clientY - rect.top;
-        const p = y / rect.height;
-
-        this.lightness = Math.round(p * 100);
-
-        if (this.linkedColorPicker) {
-            this.linkedColorPicker.onPick_();
-        }
-
-        this.pointer.style.top = `${this.lightness}%`;
-        this.linkedColorPicker.onPick_();
-        this.onPick(this.lightness);
-    }
-
-    onPick(lightness) { }
-
-    updateHue(hue) {
-        this.style.background = `linear-gradient(to bottom, hsl(${hue}, 100%, 0%), hsl(${hue}, 100%, 50%), hsl(${hue}, 100%, 100%))`;
-    }
-}
-
-class Toast extends Element {
-    constructor(message = "") {
-        super("Toast");
-        this.message = message;
-        this.appendChild(this.message);
-    }
-
-    play(duration = 2000) {
-        let clone = new Toast(this.message);
-        toastPanel.appendChild(clone);
-        toastPanel.htmlEl.style.justifyContent = "flex-start";
-        let currentHeight = parseFloat(toastPanel.htmlEl.style.height) || 0;
-        toastPanel.htmlEl.style.height = (currentHeight + 63) + "px";
-
-        setTimeout(() => {
-            toastPanel.removeChild(clone);
-            toastPanel.htmlEl.style.justifyContent = "flex-end";
-            let currentHeight = parseFloat(toastPanel.htmlEl.style.height) || 0;
-            toastPanel.htmlEl.style.height = (currentHeight - 63) + "px";
-        }, duration);
-    }
-}
-
-class Panel extends Layout {
-    constructor(tag) {
-        super("column");
-        this.htmlEl.classList.add("panel");
-        this.htmlEl.classList.add(tag);
+class Divider extends Element {
+    constructor({
+        id = "",
+        classes = [],
+        attributes = {}
+    } = {}) {
+        super({
+            tag: "hr",
+            id,
+            classes: ["divider", ...classes],
+            attributes
+        });
     }
 }
 
 class Canvas extends Element {
-    constructor() {
-        super();
-        this.canvas = document.createElement("canvas");
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.ctx = this.canvas.getContext("2d");
-        this.htmlEl.appendChild(this.canvas);
-        this.init();
-        this.interval = setInterval(() => { this.update() }, 2);
+    constructor(options = {}) {
+        super({
+            tag: "canvas",
+            ...options
+        });
+
+        this.fps = options.fps || 30;
+
+        this.ctx = this.html.getContext("2d");
+
+        this.init(this.ctx);
+
+        this.updateLoop = setInterval(() => this.update(this.ctx), 1000 / this.fps);
     }
 
-    init() { }
+    init(ctx) { }
 
-    update() { }
+    update(ctx) { }
 }
 
-class Line extends Element {
-    constructor(from, to) {
-        super("line");
-        this.from = from;
-        this.to = to;
+let temp;
 
-        this.style.left = Math.min(from.x, to.x);
-        this.style.top = Math.min(from.y, to.y);
+class HTMLInclude extends Element {
+    /**
+     * @param {string} src - URL of the HTML file to load
+     * @param {Array} classes - optional CSS classes
+     */
+    constructor({ src, classes = [], id = "" }) {
+        super({ tag: "div", classes, attributes: { id } });
+        if (src) this.load(src, id);
+    }
 
-        this.style.width = Math.abs(to.x - from.x);
-        this.style.height = Math.abs(to.y - from.y);
+    async load(url, id) {
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
+            const htmlText = await res.text();
+            // this.html.innerHTML = htmlText;
+            let DOM = stringToHTML(htmlText);
+
+            if (id) {
+                DOM = DOM.querySelector(`#${id}`)
+            }
+
+            temp = DOM;
+
+            this.id = DOM.id;
+            this.tag = DOM.tagName;
+
+            DOM.classList.forEach(x => this.classes.push(x))
+
+            DOM.childNodes.forEach(x => this.children.push(x))
+
+            for (let i = 0, atts = DOM.attributes; i < atts.length; i++) {
+                this.attributes[atts[i].nodeName] = atts[i].nodeValue;
+            }
+
+            this.root().render();
+
+        } catch (err) {
+            console.error(err);
+            this.html.innerHTML = `<div style="color:red;">Error loading content</div>`;
+        }
+        return this;
     }
 }
 
-class BlockLine extends Element {
-    constructor(dir, from, to) {
-        super();
-        this.dir = dir;
-        this.from = from;
-        this.to = to;
 
-        this.lines = [];
 
-        if (dir == "h") {
-            this.lines.push(new Line(from, { x: Math.min(from.x, to.x) + (Math.abs(to.x - from.x) / 2), y: from.y }));
-            this.lines.push(new Line({ x: Math.min(from.x, to.x) + (Math.abs(to.x - from.x) / 2), y: from.y }, { x: Math.min(from.x, to.x) + (Math.abs(to.x - from.x) / 2), y: to.y }));
-            this.lines.push(new Line({ x: Math.min(from.x, to.x) + (Math.abs(to.x - from.x) / 2), y: to.y }, to));
+
+/*------------------\
+|      STATES       |
+\------------------*/
+
+function createState(initialValue) {
+    let value = initialValue;
+    const subscribers = new Set();
+
+    return {
+        get() {
+            return value;
+        },
+
+        set(newValue) {
+            if (Object.is(value, newValue)) return;
+            value = newValue;
+            subscribers.forEach(fn => fn(value));
+        },
+
+        subscribe(fn) {
+            subscribers.add(fn);
+            // fn(value); // optional: fire immediately
+            return () => subscribers.delete(fn);
         }
-
-        if (dir == "v") {
-            this.lines.push(new Line(from, { x: from.x, y: Math.min(from.y, to.y) + (Math.abs(to.y - from.y) / 2) }));
-            this.lines.push(new Line({ x: from.x, y: Math.min(from.y, to.y) + (Math.abs(to.y - from.y) / 2) }, { x: to.x, y: Math.min(from.y, to.y) + (Math.abs(to.y - from.y) / 2) }));
-            this.lines.push(new Line(to, { x: to.x, y: Math.min(from.y, to.y) + (Math.abs(to.y - from.y) / 2) }));
-        }
-
-        for (let i = 0; i < this.lines.length; i++) {
-            this.appendChild(this.lines[i]);
-        }
-    }
+    };
 }

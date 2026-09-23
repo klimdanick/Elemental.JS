@@ -1,0 +1,129 @@
+<html>
+
+<head>
+    <script src="../../../src/Elemental.js"></script>
+    <script src="shipAddon.js"></script>
+</head>
+<script>
+    let app;
+    let compass, rudder, radar, turnRate, map, roll, pitch, table, graph;
+
+    let ShipData = {
+        yaw: createState(180),
+        pitch: createState(0),
+        roll: createState(0),
+        yawRate: createState(0),
+        rudder: createState(0),
+    }
+
+    ShipData.rudder.subscribe(rudder => ShipData.yawRate.set(rudder * 0.5))
+    ShipData.rudder.subscribe(rudder => setTableData({ rudder: Math.round(rudder) }))
+    ShipData.yawRate.subscribe(yawRate => ShipData.roll.set(yawRate * -1))
+    ShipData.pitch.subscribe(pitch => setTableData({ pitch: Math.round(pitch) }))
+    ShipData.roll.subscribe(roll => setTableData({ roll: Math.round(roll) }))
+    ShipData.yaw.subscribe(yaw => setTableData({ yaw: Math.round(yaw) }))
+    ShipData.yaw.subscribe(yaw => {
+        if (yaw < 360 && yaw >= 0) return;
+        let newYaw = yaw % 360;
+        if (newYaw < 0) newYaw = 360 + newYaw;
+        ShipData.yaw.set(newYaw);
+    })
+    let t = 0;
+    ShipData.pitch.subscribe(yaw => {
+        graph.append({x: t, y: yaw});
+        graph.min = {x: t-1000, y: -3};
+        graph.max = {x: t, y: 3};
+        t++;
+    })
+
+    setInterval(() => ShipData.yaw.set(ShipData.yaw.get() + ShipData.yawRate.get() * (20 / 1000)), 20)
+    setInterval(() => ShipData.rudder.set(ShipData.rudder.get() + (Math.random() * 4 - 2 - (ShipData.rudder.get() / 45))), 200)
+    setInterval(() => ShipData.pitch.set(Math.sin(new Date().getTime() / 1000) * 2), 20)
+
+    let TableData = createState(
+        {
+            speed: 12.1,
+            windS: 18.4,
+            windD: 145,
+            rpm: 96,
+            rudder: -5.2,
+            yaw: 0,
+            roll: 0,
+            pitch: 0,
+        }
+    );
+
+    TableData.subscribe(data => {
+        table.data = [
+            ["Speed", data.speed, "kn", "Log"],
+            ["Wind Speed", data.windS, "kn", "Anemometer"],
+            ["Wind Direction", data.windD, "°T", "Anemometer"],
+            ["Main Engine RPM", data.rpm, "rpm", "Engine"],
+            ["Rudder Angle", data.rudder, "°", "Steering Gear"],
+            ["yaw", data.yaw, "°", "compass"],
+            ["roll", data.roll, "°", "gyro"],
+            ["pitch", data.pitch, "°", "gyro"],
+        ]; table.render()
+    });
+
+    let setTableData = (data = {}) => {
+        let old = TableData.get();
+        TableData.set({
+            speed: data?.speed || old.speed,
+            windS: data?.windS || old.windS,
+            windD: data?.windD || old.windD,
+            rpm: data?.rpm || old.rpm,
+            rudder: data?.rudder || old.rudder,
+            yaw: data?.yaw || old.yaw,
+            roll: data?.roll || old.roll,
+            pitch: data?.pitch || old.pitch,
+        })
+    }
+
+    OnElementalLoad = () => {
+
+        compass = new Compass(ShipData.yaw);
+        rudder = new Rudder(ShipData.rudder);
+        radar = new Element({ tag: "div" });
+        turnRate = new TurnRate(ShipData.yawRate);
+        map = new Element({ tag: "div" });
+        roll = new Roll(ShipData.roll);
+        pitch = new Pitch(ShipData.pitch);
+        table = new Table({
+            columns: ["Parameter", "Value", "Unit", "Source"],
+            data: []
+        });
+        graph = new LineGraph({n:1000});
+
+        app = Layout.row({ id: "mainLayout" })
+            .column({ id: "attitude" }).append(compass, Layout.row({ id: "pitch-roll-layout" }).append(roll, pitch), rudder,).end()
+            .column({ id: "navigation" }).append(turnRate, radar, map).end()
+            .column({ id: "data" }).append(graph, table).end()
+
+        body.append(app);
+        body.render();
+    }
+</script>
+<style>
+    .column {
+        width: 100%;
+        height: 100%;
+    }
+
+    .compass,
+    .rudder,
+    .roll,
+    .TurnRate,
+    .table,
+    .lineGraph {
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        --level: increment !important;
+    }
+
+    #pitch-roll-layout {
+        --level: keep;
+    }
+</style>
+
+</html>

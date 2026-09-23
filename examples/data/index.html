@@ -1,0 +1,91 @@
+<html data-theme="light">
+
+<head>
+    <script src="../../src/Elemental.js"></script>
+</head>
+<script>
+    let app;
+    let prog;
+    const count = createState(65);
+
+    const barsData = createState(
+        [40, 70, 25, 10, 60]
+    );
+
+    OnElementalLoad = () => {
+        app = Layout.row({ id: "mainLayout" });
+
+        let form = new Form({
+            id: "form1", onSubmit: (data) => {
+                console.log(JSON.stringify(Object.fromEntries(data)));
+            },
+        });
+
+        let table = new Table({
+            columns: ["Name", "Age", "Role"],
+            data: [
+                ["Alice", new NumberInput({ name: "age1", value: 24 }), new Badge({ classes: ["danger"] }).append("Admin")],
+                ["Bob", new NumberInput({ name: "age2", value: 31 }), new Badge({ classes: ["primary"] }).append("User")],
+            ]
+        });
+
+        form.append(table).row({ attributes: { style: "width: 100%; justify-content: space-between;" } }).append(
+            reset = new Button({ type: "reset", classes: ["danger"] }).append(new Icon({ src: getEjsAsset("rotate_left"), }), "Reset"),
+            submit = new Button({
+                type: "submit", classes: ["primary"], listeners: {
+                    click: (e) => {
+                        submit.setLoading(true);
+                        setTimeout(() => { submit.setLoading(false); }, 1000);
+                    }
+                }
+            }).append(new Icon({ src: getEjsAsset("save") }), "Save")
+        ).root();
+
+        let list = new List([
+            "Item A",
+            "Item B",
+            "Item C",
+        ]);
+
+        let bars = new BarGraph({ values: barsData.get(), labels: ["A", "B", "C", "D", "E"] });
+
+        barsData.subscribe(data => {
+            bars.values = data;
+            bars.render();
+        })
+
+        prog = new ProgressBar({ value: 65 });
+
+        count.subscribe(value => {
+            if (value > 100) return count.set(100);
+            if (value < 0) return count.set(0);
+            prog.value = value;
+            prog.render();
+        });
+
+        app.append(form, list, bars, prog);
+
+        body.append(app);
+
+        body.render();
+
+        setInterval(() => {
+            let vo = barsData.get();
+
+            const vn = (vo) => vo+Math.round(Math.random() * 10 - 5);
+
+            barsData.set(
+                [vn(vo[0]), vn(vo[1]), vn(vo[2]), vn(vo[3]), vn(vo[4])]
+            )
+        }, 1000)
+    }
+</script>
+<style>
+    .progress {
+        width: 200px;
+    }
+</style>
+
+<body></body>
+
+</html>
